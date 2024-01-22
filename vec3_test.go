@@ -34,35 +34,72 @@ func TestAdd(t *testing.T) {
 	v1 := raytracer.Vec3{1, 2, 3}
 	v2 := raytracer.Vec3{1, 1, 1}
 
-	v1.Add(&v2)
+	v3 := v1.Add(v2)
 
-	if v1.X() != 2 {
+	if v3.X() != 2 {
 		t.Fail()
 	}
 
-	if v1.Y() != 3 {
+	if v3.Y() != 3 {
 		t.Fail()
 	}
 
-	if v1.Z() != 4 {
+	if v3.Z() != 4 {
+		t.Fail()
+	}
+}
+
+func TestSubtract(t *testing.T) {
+	v1 := raytracer.Vec3{1, 2, 3}
+	v2 := raytracer.Vec3{1, 1, 1}
+
+	v3 := v1.Subtract(v2)
+
+	if v3.X() != 0 {
+		t.Fail()
+	}
+
+	if v3.Y() != 1 {
+		t.Fail()
+	}
+
+	if v3.Z() != 2 {
 		t.Fail()
 	}
 }
 
 func TestMultiply(t *testing.T) {
-	v := raytracer.Vec3{1, 2, 3}
+	v1 := raytracer.Vec3{1, 2, 3}
 
-	v.Multiply(2)
+	v2 := v1.Multiply(2)
 
-	if v.X() != 2 {
+	if v2.X() != 2 {
 		t.Fail()
 	}
 
-	if v.Y() != 4 {
+	if v2.Y() != 4 {
 		t.Fail()
 	}
 
-	if v.Z() != 6 {
+	if v2.Z() != 6 {
+		t.Fail()
+	}
+}
+
+func TestDivide(t *testing.T) {
+	v1 := raytracer.Vec3{2, 4, 8}
+
+	v2 := v1.Divide(2)
+
+	if v2.X() != 1 {
+		t.Fail()
+	}
+
+	if v2.Y() != 2 {
+		t.Fail()
+	}
+
+	if v2.Z() != 4 {
 		t.Fail()
 	}
 }
