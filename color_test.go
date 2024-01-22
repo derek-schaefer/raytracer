@@ -8,7 +8,7 @@ import (
 )
 
 func TestColorWritePPM(t *testing.T) {
-	c := raytracer.Color{2e-2, 4e-2, 8e-2}
+	c := raytracer.NewColor(raytracer.Vec3{2e-2, 4e-2, 8e-2})
 
 	var b bytes.Buffer
 
