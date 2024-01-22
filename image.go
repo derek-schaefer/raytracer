@@ -3,34 +3,40 @@ package raytracer
 import (
 	"bytes"
 	"fmt"
-	"log"
 )
 
 type Image struct {
 	Width  int
 	Height int
+	Pixels []Color
 }
 
-func (image Image) WritePPM() *bytes.Buffer {
+func NewImage(w, h int) *Image {
+	return &Image{
+		Width:  w,
+		Height: h,
+		Pixels: make([]Color, w*h),
+	}
+}
+
+func (img *Image) Get(x, y int) Color {
+	return img.Pixels[x*img.Height+y]
+}
+
+func (img *Image) Set(c Color, x, y int) {
+	img.Pixels[x*img.Height+y] = c
+}
+
+func (img *Image) WritePPM() *bytes.Buffer {
 	var buffer bytes.Buffer
 
-	buffer.WriteString(fmt.Sprintf("P3\n%d %d\n255\n", image.Width, image.Height))
+	buffer.WriteString(fmt.Sprintf("P3\n%d %d\n255\n", img.Width, img.Height))
 
-	for j := 0; j < image.Height; j++ {
-		log.Printf("Scanlines remaining: %d\n", image.Height-j)
-
-		for i := 0; i < image.Width; i++ {
-			c := Color{
-				float64(i) / (float64(image.Width) - 1),
-				float64(j) / (float64(image.Height) - 1),
-				0,
-			}
-
-			c.WritePPM(&buffer)
+	for j := 0; j < img.Height; j++ {
+		for i := 0; i < img.Width; i++ {
+			img.Get(i, j).WritePPM(&buffer)
 		}
 	}
-
-	log.Println("Done.")
 
 	return &buffer
 }
