@@ -7,5 +7,5 @@ import (
 )
 
 func main() {
-	fmt.Print(raytracer.WritePPM(raytracer.Image{Width: 256, Height: 256}))
+	fmt.Print(raytracer.Image{Width: 256, Height: 256}.WritePPM())
 }
