@@ -1,5 +1,10 @@
 package raytracer
 
+import (
+	"fmt"
+	"math"
+)
+
 type Vec3 [3]float64
 
 func (v Vec3) X() float64 {
@@ -40,4 +45,20 @@ func (v Vec3) Multiply(t float64) Vec3 {
 
 func (v Vec3) Divide(t float64) Vec3 {
 	return v.Multiply(1 / t)
+}
+
+func (v Vec3) LengthSquared() float64 {
+	return v.X()*v.X() + v.Y()*v.Y() + v.Z()*v.Z()
+}
+
+func (v Vec3) Length() float64 {
+	return math.Sqrt(v.LengthSquared())
+}
+
+func (v Vec3) Unit() Vec3 {
+	return v.Divide(v.Length())
+}
+
+func (v Vec3) String() string {
+	return fmt.Sprintf("Vec3(%f, %f, %f)", v.X(), v.Y(), v.Z())
 }

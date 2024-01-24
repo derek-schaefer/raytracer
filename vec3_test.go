@@ -1,105 +1,110 @@
 package raytracer_test
 
 import (
+	"math"
 	"testing"
 
-	"github.com/derek-schaefer/raytracer"
+	r "github.com/derek-schaefer/raytracer"
 )
 
-func TestX(t *testing.T) {
-	v := raytracer.Vec3{1, 0, 0}
+func TestVec3X(t *testing.T) {
+	v := r.Vec3{1, 0, 0}
 
 	if v.X() != 1 {
 		t.Fail()
 	}
 }
 
-func TestY(t *testing.T) {
-	v := raytracer.Vec3{0, 1, 0}
+func TestVec3Y(t *testing.T) {
+	v := r.Vec3{0, 1, 0}
 
 	if v.Y() != 1 {
 		t.Fail()
 	}
 }
 
-func TestZ(t *testing.T) {
-	v := raytracer.Vec3{0, 0, 1}
+func TestVec3Z(t *testing.T) {
+	v := r.Vec3{0, 0, 1}
 
 	if v.Z() != 1 {
 		t.Fail()
 	}
 }
 
-func TestAdd(t *testing.T) {
-	v1 := raytracer.Vec3{1, 2, 3}
-	v2 := raytracer.Vec3{1, 1, 1}
+func TestVec3Add(t *testing.T) {
+	v1 := r.Vec3{1, 2, 3}
+	v2 := r.Vec3{1, 1, 1}
 
 	v3 := v1.Add(v2)
 
-	if v3.X() != 2 {
-		t.Fail()
-	}
-
-	if v3.Y() != 3 {
-		t.Fail()
-	}
-
-	if v3.Z() != 4 {
+	if v3 != (r.Vec3{2, 3, 4}) {
 		t.Fail()
 	}
 }
 
-func TestSubtract(t *testing.T) {
-	v1 := raytracer.Vec3{1, 2, 3}
-	v2 := raytracer.Vec3{1, 1, 1}
+func TestVec3Subtract(t *testing.T) {
+	v1 := r.Vec3{1, 2, 3}
+	v2 := r.Vec3{1, 1, 1}
 
 	v3 := v1.Subtract(v2)
 
-	if v3.X() != 0 {
-		t.Fail()
-	}
-
-	if v3.Y() != 1 {
-		t.Fail()
-	}
-
-	if v3.Z() != 2 {
+	if v3 != (r.Vec3{0, 1, 2}) {
 		t.Fail()
 	}
 }
 
-func TestMultiply(t *testing.T) {
-	v1 := raytracer.Vec3{1, 2, 3}
+func TestVec3Multiply(t *testing.T) {
+	v1 := r.Vec3{1, 2, 3}
 
 	v2 := v1.Multiply(2)
 
-	if v2.X() != 2 {
-		t.Fail()
-	}
-
-	if v2.Y() != 4 {
-		t.Fail()
-	}
-
-	if v2.Z() != 6 {
+	if v2 != (r.Vec3{2, 4, 6}) {
 		t.Fail()
 	}
 }
 
-func TestDivide(t *testing.T) {
-	v1 := raytracer.Vec3{2, 4, 8}
+func TestVec3Divide(t *testing.T) {
+	v1 := r.Vec3{2, 4, 8}
 
 	v2 := v1.Divide(2)
 
-	if v2.X() != 1 {
+	if v2 != (r.Vec3{1, 2, 4}) {
 		t.Fail()
 	}
+}
 
-	if v2.Y() != 2 {
+func TestVec3Unit(t *testing.T) {
+	n1 := 3.0
+	v1 := r.Vec3{n1, n1, n1}
+
+	n2 := n1 / math.Sqrt(math.Pow(n1, 3))
+	v2 := v1.Unit()
+
+	if v2 != (r.Vec3{n2, n2, n2}) {
 		t.Fail()
 	}
+}
 
-	if v2.Z() != 4 {
+func TestVec3LengthSquared(t *testing.T) {
+	v := r.Vec3{2, 3, 4}
+
+	if v.LengthSquared() != 29 {
+		t.Fail()
+	}
+}
+
+func TestVec3Length(t *testing.T) {
+	v := r.Vec3{2, 3, 4}
+
+	if v.Length() != math.Sqrt(29) {
+		t.Fail()
+	}
+}
+
+func TestVec3String(t *testing.T) {
+	v := r.Vec3{1, 2, 3}
+
+	if v.String() != "Vec3(1.000000, 2.000000, 3.000000)" {
 		t.Fail()
 	}
 }
