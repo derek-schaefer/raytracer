@@ -19,14 +19,17 @@ func NewImage(w, h int) *Image {
 	}
 }
 
+// Return the pixel color.
 func (img *Image) Get(x, y int) Color {
 	return img.Pixels[x*img.Height+y]
 }
 
+// Set the pixel color.
 func (img *Image) Set(c Color, x, y int) {
 	img.Pixels[x*img.Height+y] = c
 }
 
+// Write the image in PPM format to a buffer.
 func (img *Image) WritePPM() *bytes.Buffer {
 	var buffer bytes.Buffer
 
