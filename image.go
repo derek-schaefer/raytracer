@@ -21,25 +21,21 @@ func NewImage(w, h int) *Image {
 
 // Return the pixel color.
 func (img *Image) Get(x, y int) Color {
-	return img.Pixels[x*img.Height+y]
+	return img.Pixels[y*img.Width+x]
 }
 
 // Set the pixel color.
 func (img *Image) Set(c Color, x, y int) {
-	img.Pixels[x*img.Height+y] = c
+	img.Pixels[y*img.Width+x] = c
 }
 
 // Write the image in PPM format to a buffer.
-func (img *Image) WritePPM() *bytes.Buffer {
-	var buffer bytes.Buffer
-
+func (img *Image) WritePPM(buffer *bytes.Buffer) {
 	buffer.WriteString(fmt.Sprintf("P3\n%d %d\n255\n", img.Width, img.Height))
 
 	for j := 0; j < img.Height; j++ {
 		for i := 0; i < img.Width; i++ {
-			img.Get(i, j).WritePPM(&buffer)
+			img.Get(i, j).WritePPM(buffer)
 		}
 	}
-
-	return &buffer
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 
 	r "github.com/derek-schaefer/raytracer"
@@ -55,5 +56,7 @@ func main() {
 		}
 	}
 
-	fmt.Print(image.WritePPM())
+	var buffer bytes.Buffer
+	image.WritePPM(&buffer)
+	fmt.Print(&buffer)
 }

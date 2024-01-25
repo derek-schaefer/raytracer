@@ -13,6 +13,7 @@ func NewColor(v Vec3) Color {
 	return Color{v}
 }
 
+// Write the color in PPM format to a buffer.
 func (c Color) WritePPM(buf *bytes.Buffer) {
 	r := uint8(255.999 * c.v.X())
 	g := uint8(255.999 * c.v.Y())
