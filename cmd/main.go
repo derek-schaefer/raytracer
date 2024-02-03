@@ -15,26 +15,11 @@ const (
 	aspectRatio    = 16.0 / 9.0
 )
 
-func hitSphere(center r.Point3, radius float64, r r.Ray) float64 {
-	oc := r.Origin.Subtract(center)
-	a := r.Direction.LengthSquared()
-	halfB := oc.Dot(r.Direction)
-	c := oc.LengthSquared() - radius*radius
-	discriminant := halfB*halfB - a*c
-
-	if discriminant < 0 {
-		return -1.0
-	} else {
-		return (-halfB - math.Sqrt(discriminant)) / a
-	}
-}
-
 func rayColor(ray r.Ray) r.Color {
-	t := hitSphere(r.Point3{0, 0, -1}, 0.5, ray)
+	s := r.Sphere{Center: r.Point3{0, 0, -1}, Radius: 0.5}
 
-	if t > 0 {
-		n := ray.At(t).Subtract(r.Vec3{0, 0, -1}).Unit()
-		return r.NewColor(r.Vec3{n.X() + 1, n.Y() + 1, n.Z() + 1}.Multiply(0.5))
+	if h, ok := s.Hit(ray, 0, math.Inf(1)); ok {
+		return r.NewColor(h.N.Add(r.Vec3{1, 1, 1}).Multiply(0.5))
 	}
 
 	unitDirection := ray.Direction.Unit()
