@@ -14,6 +14,28 @@ const (
 	aspectRatio    = 16.0 / 9.0
 )
 
+func hitSphere(center r.Point3, radius float64, r r.Ray) bool {
+	oc := r.Origin.Subtract(center)
+	a := r.Direction.Dot(r.Direction)
+	b := 2.0 * oc.Dot(r.Direction)
+	c := oc.Dot(oc) - radius*radius
+	discriminant := b*b - 4*a*c
+
+	return discriminant >= 0
+}
+
+func rayColor(ray r.Ray) r.Color {
+	if hitSphere(r.Point3{0, 0, -1}, 0.5, ray) {
+		return r.NewColor(r.Vec3{1, 0, 0})
+	}
+
+	unitDirection := ray.Direction.Unit()
+	a := 0.5 * (unitDirection.Y() + 1.0)
+	c := r.Vec3{1.0, 1.0, 1.0}.Multiply(1.0 - a).Add(r.Vec3{0.5, 0.7, 1.0}.Multiply(a))
+
+	return r.NewColor(c)
+}
+
 func main() {
 	imageHeight := int(imageWidth / aspectRatio)
 
@@ -48,11 +70,7 @@ func main() {
 			rayDirection := pixelCenter.Subtract(camera.Center)
 			ray := r.Ray{Origin: camera.Center, Direction: rayDirection}
 
-			unitDirection := ray.Direction.Unit()
-			a := 0.5 * (unitDirection.Y() + 1.0)
-			c := r.Vec3{1.0, 1.0, 1.0}.Multiply(1.0 - a).Add(r.Vec3{0.5, 0.7, 1.0}.Multiply(a))
-
-			image.Set(r.NewColor(c), i, j)
+			image.Set(rayColor(ray), i, j)
 		}
 	}
 
