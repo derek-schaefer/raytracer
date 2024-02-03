@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"math"
 
 	r "github.com/derek-schaefer/raytracer"
 )
@@ -14,19 +15,26 @@ const (
 	aspectRatio    = 16.0 / 9.0
 )
 
-func hitSphere(center r.Point3, radius float64, r r.Ray) bool {
+func hitSphere(center r.Point3, radius float64, r r.Ray) float64 {
 	oc := r.Origin.Subtract(center)
-	a := r.Direction.Dot(r.Direction)
-	b := 2.0 * oc.Dot(r.Direction)
-	c := oc.Dot(oc) - radius*radius
-	discriminant := b*b - 4*a*c
+	a := r.Direction.LengthSquared()
+	halfB := oc.Dot(r.Direction)
+	c := oc.LengthSquared() - radius*radius
+	discriminant := halfB*halfB - a*c
 
-	return discriminant >= 0
+	if discriminant < 0 {
+		return -1.0
+	} else {
+		return (-halfB - math.Sqrt(discriminant)) / a
+	}
 }
 
 func rayColor(ray r.Ray) r.Color {
-	if hitSphere(r.Point3{0, 0, -1}, 0.5, ray) {
-		return r.NewColor(r.Vec3{1, 0, 0})
+	t := hitSphere(r.Point3{0, 0, -1}, 0.5, ray)
+
+	if t > 0 {
+		n := ray.At(t).Subtract(r.Vec3{0, 0, -1}).Unit()
+		return r.NewColor(r.Vec3{n.X() + 1, n.Y() + 1, n.Z() + 1}.Multiply(0.5))
 	}
 
 	unitDirection := ray.Direction.Unit()
