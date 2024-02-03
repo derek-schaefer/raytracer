@@ -10,6 +10,8 @@ type Sphere struct {
 }
 
 func (s Sphere) Hit(r Ray, tmin, tmax float64) (Hit, bool) {
+	var hit Hit
+
 	oc := r.Origin.Subtract(s.Center)
 	a := r.Direction.LengthSquared()
 	halfB := oc.Dot(r.Direction)
@@ -18,7 +20,7 @@ func (s Sphere) Hit(r Ray, tmin, tmax float64) (Hit, bool) {
 	discriminant := halfB*halfB - a*c
 
 	if discriminant < 0 {
-		return Hit{}, false
+		return hit, false
 	}
 
 	sqrtd := math.Sqrt(discriminant)
@@ -27,11 +29,9 @@ func (s Sphere) Hit(r Ray, tmin, tmax float64) (Hit, bool) {
 	if root <= tmin || tmax <= root {
 		root = (-halfB + sqrtd) / a
 		if root <= tmin || tmax <= root {
-			return Hit{}, false
+			return hit, false
 		}
 	}
-
-	var hit Hit
 
 	hit.T = root
 	hit.P = r.At(hit.T)
