@@ -9,3 +9,5 @@ The deliverable will be a program that can perform basic ray tracing operations 
 Instead of using C++ as in the linked resource, I'll be using Go. My motivations for undertaking this effort are to refamiliarize myself with Go, as well as learn about ray tracing and related graphical concepts.
 
 Let's get tracing!
+
+![Example](./image.png)
