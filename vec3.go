@@ -59,6 +59,16 @@ func (v Vec3) Unit() Vec3 {
 	return v.Divide(v.Length())
 }
 
+func (v Vec3) Dot(o Vec3) float64 {
+	var t float64
+
+	for i := 0; i < len(v); i++ {
+		t += v[i] * o[i]
+	}
+
+	return t
+}
+
 func (v Vec3) String() string {
 	return fmt.Sprintf("Vec3(%f, %f, %f)", v.X(), v.Y(), v.Z())
 }

@@ -101,6 +101,17 @@ func TestVec3Length(t *testing.T) {
 	}
 }
 
+func TestVec3Dot(t *testing.T) {
+	v1 := r.Vec3{1, 2, 3}
+	v2 := r.Vec3{2, 3, 4}
+
+	v3 := v1.Dot(v2)
+
+	if v3 != 20 {
+		t.Fail()
+	}
+}
+
 func TestVec3String(t *testing.T) {
 	v := r.Vec3{1, 2, 3}
 
