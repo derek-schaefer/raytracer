@@ -35,7 +35,8 @@ func (s Sphere) Hit(r Ray, tmin, tmax float64) (Hit, bool) {
 
 	hit.T = root
 	hit.P = r.At(hit.T)
-	hit.N = hit.P.Subtract(s.Center).Divide(s.Radius)
+
+	hit.SetFaceNormal(r, hit.P.Subtract(s.Center).Divide(s.Radius))
 
 	return hit, true
 }

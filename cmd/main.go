@@ -15,10 +15,8 @@ const (
 	aspectRatio    = 16.0 / 9.0
 )
 
-func rayColor(ray r.Ray) r.Color {
-	s := r.Sphere{Center: r.Point3{0, 0, -1}, Radius: 0.5}
-
-	if h, ok := s.Hit(ray, 0, math.Inf(1)); ok {
+func rayColor(ray r.Ray, world *r.Hittables) r.Color {
+	if h, ok := world.Hit(ray, 0, math.Inf(1)); ok {
 		return r.NewColor(h.N.Add(r.Vec3{1, 1, 1}).Multiply(0.5))
 	}
 
@@ -30,6 +28,11 @@ func rayColor(ray r.Ray) r.Color {
 }
 
 func main() {
+	world := r.NewHittables()
+
+	world.Add(r.Sphere{Center: r.Point3{0, 0, -1}, Radius: 0.5})
+	world.Add(r.Sphere{Center: r.Point3{0, -100.5, -1}, Radius: 100})
+
 	imageHeight := int(imageWidth / aspectRatio)
 
 	camera := r.Camera{
@@ -63,7 +66,7 @@ func main() {
 			rayDirection := pixelCenter.Subtract(camera.Center)
 			ray := r.Ray{Origin: camera.Center, Direction: rayDirection}
 
-			image.Set(rayColor(ray), i, j)
+			image.Set(rayColor(ray, world), i, j)
 		}
 	}
 
