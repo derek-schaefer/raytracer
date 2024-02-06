@@ -9,8 +9,7 @@ type Sphere struct {
 	Radius float64
 }
 
-func (s Sphere) Hit(r Ray, tmin, tmax float64) (Hit, bool) {
-	var hit Hit
+func (s Sphere) Hit(r Ray, rt Interval) (Hit, bool) {
 
 	oc := r.Origin.Subtract(s.Center)
 	a := r.Direction.LengthSquared()
@@ -20,18 +19,20 @@ func (s Sphere) Hit(r Ray, tmin, tmax float64) (Hit, bool) {
 	discriminant := halfB*halfB - a*c
 
 	if discriminant < 0 {
-		return hit, false
+		return Hit{}, false
 	}
 
 	sqrtd := math.Sqrt(discriminant)
 
 	root := (-halfB - sqrtd) / a
-	if root <= tmin || tmax <= root {
+	if !rt.Surrounds(root) {
 		root = (-halfB + sqrtd) / a
-		if root <= tmin || tmax <= root {
-			return hit, false
+		if !rt.Surrounds(root) {
+			return Hit{}, false
 		}
 	}
+
+	var hit Hit
 
 	hit.T = root
 	hit.P = r.At(hit.T)

@@ -16,7 +16,7 @@ const (
 )
 
 func rayColor(ray r.Ray, world *r.Hittables) r.Color {
-	if h, ok := world.Hit(ray, 0, math.Inf(1)); ok {
+	if h, ok := world.Hit(ray, r.NewInterval(0, math.Inf(1))); ok {
 		return r.NewColor(h.N.Add(r.Vec3{1, 1, 1}).Multiply(0.5))
 	}
 

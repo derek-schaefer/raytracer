@@ -12,7 +12,7 @@ func TestSphereHit(t *testing.T) {
 
 	r1 := r.Ray{Origin: r.Vec3{}, Direction: r.Vec3{0, 0, -1}}
 
-	if _, ok := s1.Hit(r1, 0, math.Inf(1)); !ok {
+	if _, ok := s1.Hit(r1, r.Interval{0, math.Inf(1)}); !ok {
 		t.Fail()
 	}
 
@@ -20,7 +20,7 @@ func TestSphereHit(t *testing.T) {
 
 	r2 := r.Ray{Origin: r.Vec3{}, Direction: r.Vec3{0, 0, 1}}
 
-	if _, ok := s2.Hit(r2, 0, math.Inf(1)); ok {
+	if _, ok := s2.Hit(r2, r.Interval{0, math.Inf(1)}); ok {
 		t.Fail()
 	}
 }

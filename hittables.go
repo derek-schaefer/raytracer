@@ -5,32 +5,24 @@ type Hittables struct {
 }
 
 func NewHittables(objs ...Hittable) *Hittables {
-	h := Hittables{}
-
-	if len(objs) > 0 {
-		h.Objects = objs
-	} else {
-		h.Clear()
-	}
-
-	return &h
+	return &Hittables{objs}
 }
 
-func (h *Hittables) Add(obj Hittable) {
-	h.Objects = append(h.Objects, obj)
+func (hs *Hittables) Add(obj Hittable) {
+	hs.Objects = append(hs.Objects, obj)
 }
 
-func (h *Hittables) Clear() {
-	h.Objects = make([]Hittable, 0)
+func (hs *Hittables) Clear() {
+	hs.Objects = make([]Hittable, 0)
 }
 
-func (hs *Hittables) Hit(r Ray, tmin, tmax float64) (Hit, bool) {
+func (hs *Hittables) Hit(r Ray, rt Interval) (Hit, bool) {
 	var hit Hit
 	hitAny := false
-	closest := tmax
+	closest := rt.Max
 
 	for i := 0; i < len(hs.Objects); i++ {
-		if h, ok := hs.Objects[i].Hit(r, tmin, closest); ok {
+		if h, ok := hs.Objects[i].Hit(r, NewInterval(rt.Min, closest)); ok {
 			hit = h
 			hitAny = true
 			closest = h.T
