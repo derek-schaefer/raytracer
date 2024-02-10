@@ -25,7 +25,7 @@ func (img *Image) Get(x, y int) Color {
 }
 
 // Set the pixel color.
-func (img *Image) Set(c Color, x, y int) {
+func (img *Image) Set(x, y int, c Color) {
 	img.Pixels[y*img.Width+x] = c
 }
 
