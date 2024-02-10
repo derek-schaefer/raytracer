@@ -7,6 +7,22 @@ import (
 	r "github.com/derek-schaefer/raytracer"
 )
 
+func TestNewVec3(t *testing.T) {
+	v := r.NewVec3(1, 2, 3)
+
+	if v.X() != 1 {
+		t.Fail()
+	}
+
+	if v.Y() != 2 {
+		t.Fail()
+	}
+
+	if v.Z() != 3 {
+		t.Fail()
+	}
+}
+
 func TestVec3X(t *testing.T) {
 	v := r.Vec3{1, 0, 0}
 
@@ -27,6 +43,36 @@ func TestVec3Z(t *testing.T) {
 	v := r.Vec3{0, 0, 1}
 
 	if v.Z() != 1 {
+		t.Fail()
+	}
+}
+
+func TestVec3SetY(t *testing.T) {
+	v := r.Vec3{0, 0, 0}
+
+	v.SetY(1)
+
+	if v.Y() != 1 {
+		t.Fail()
+	}
+}
+
+func TestVec3SetZ(t *testing.T) {
+	v := r.Vec3{0, 0, 0}
+
+	v.SetZ(1)
+
+	if v.Z() != 1 {
+		t.Fail()
+	}
+}
+
+func TestVec3SetX(t *testing.T) {
+	v := r.Vec3{0, 0, 0}
+
+	v.SetX(1)
+
+	if v.X() != 1 {
 		t.Fail()
 	}
 }

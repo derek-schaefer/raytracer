@@ -7,6 +7,10 @@ import (
 
 type Vec3 [3]float64
 
+func NewVec3(x, y, z float64) Vec3 {
+	return Vec3{x, y, z}
+}
+
 func (v Vec3) X() float64 {
 	return v[0]
 }
@@ -17,6 +21,24 @@ func (v Vec3) Y() float64 {
 
 func (v Vec3) Z() float64 {
 	return v[2]
+}
+
+func (v *Vec3) SetX(x float64) *Vec3 {
+	v[0] = x
+
+	return v
+}
+
+func (v *Vec3) SetY(y float64) *Vec3 {
+	v[1] = y
+
+	return v
+}
+
+func (v *Vec3) SetZ(z float64) *Vec3 {
+	v[2] = z
+
+	return v
 }
 
 func (v Vec3) Add(o Vec3) Vec3 {
