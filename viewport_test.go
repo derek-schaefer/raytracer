@@ -41,10 +41,12 @@ func TestViewportDeltaV(t *testing.T) {
 func TestViewportOrigin(t *testing.T) {
 	v := r.Viewport{Width: 16, Height: 9}
 
-	c := r.Camera{
-		Center:      r.Point3{0, 0, 0},
-		FocalLength: 1.0,
-	}
+	c := r.NewCamera(
+		r.CameraOptions{
+			Center:      r.Point3{0, 0, 0},
+			FocalLength: 1.0,
+		},
+	)
 
 	if v.Origin(c) != (r.Point3{-8, 4.5, -1}) {
 		t.Fail()

@@ -1,60 +1,118 @@
 package raytracer
 
-import "math"
+import (
+	"math"
+	"math/rand"
+)
 
-type Camera struct {
+type CameraOptions struct {
 	AspectRatio    float64
 	Center         Point3
 	FocalLength    float64
 	ImageWidth     int
 	ViewportHeight float64
+	Samples        int
 }
 
+type Camera struct {
+	CameraOptions
+
+	deltaU      Vec3
+	deltaV      Vec3
+	imageHeight int
+	vorigin     Vec3
+	iorigin     Vec3
+	viewport    Viewport
+}
+
+func NewCamera(options CameraOptions) *Camera {
+	return &Camera{CameraOptions: options}
+}
+
+// Use the world of hittable objects to produce a new image.
 func (c *Camera) Render(world *Hittables) *Image {
-	imageHeight := int(float64(c.ImageWidth) / c.AspectRatio)
+	c.initialize()
 
-	viewport := Viewport{
-		Height: c.ViewportHeight,
-		Width:  c.ViewportHeight * float64(c.ImageWidth) / float64(imageHeight),
-	}
-
-	vorigin := c.Center.Subtract(Vec3{0, 0, c.FocalLength}).
-		Subtract(viewport.U().Divide(2)).
-		Subtract(viewport.V().Divide(2))
-
-	image := NewImage(c.ImageWidth, imageHeight)
-
-	iorigin := vorigin.Add(
-		(viewport.DeltaU(float64(image.Width)).
-			Add(viewport.DeltaV(float64(image.Height)))).
-			Multiply(0.5),
-	)
-
-	deltaU := viewport.DeltaU(float64(image.Width))
-	deltaV := viewport.DeltaV(float64(image.Height))
+	image := NewImage(c.ImageWidth, c.imageHeight)
 
 	for j := 0; j < image.Height; j++ {
 		for i := 0; i < image.Width; i++ {
-			pixelCenter := iorigin.Add(deltaU.Multiply(float64(i))).Add(deltaV.Multiply(float64(j)))
-			rayDirection := pixelCenter.Subtract(c.Center)
-			ray := Ray{Origin: c.Center, Direction: rayDirection}
+			var pixel Vec3
 
-			image.Set(c.rayColor(ray, world), i, j)
+			for s := 0; s < c.Samples; s++ {
+				ray := c.getRay(i, j)
+				pixel = pixel.Add(c.rayColor(ray, world).V)
+			}
+
+			scale := 1.0 / float64(c.Samples)
+			pixel.SetX(pixel.X() * scale)
+			pixel.SetY(pixel.Y() * scale)
+			pixel.SetZ(pixel.Z() * scale)
+
+			image.Set(i, j, NewColor(pixel))
 		}
 	}
 
 	return image
 }
 
+// Assign a variety of properties used by multiple camera methods.
+func (c *Camera) initialize() {
+	c.imageHeight = int(float64(c.ImageWidth) / c.AspectRatio)
+
+	c.viewport = Viewport{
+		Height: c.ViewportHeight,
+		Width:  c.ViewportHeight * float64(c.ImageWidth) / float64(c.imageHeight),
+	}
+
+	c.vorigin = c.Center.Subtract(Vec3{0, 0, c.FocalLength}).
+		Subtract(c.viewport.U().Divide(2)).
+		Subtract(c.viewport.V().Divide(2))
+
+	c.iorigin = c.vorigin.Add(
+		(c.viewport.DeltaU(float64(c.ImageWidth)).
+			Add(c.viewport.DeltaV(float64(c.imageHeight)))).
+			Multiply(0.5),
+	)
+
+	c.deltaU = c.viewport.DeltaU(float64(c.ImageWidth))
+	c.deltaV = c.viewport.DeltaV(float64(c.imageHeight))
+}
+
+// Get a randomly sampled camera ray for the pixel at location i, j.
+func (c *Camera) getRay(i, j int) Ray {
+	di := c.deltaU.Multiply(float64(i))
+	dj := c.deltaV.Multiply(float64(j))
+
+	pixelCenter := c.iorigin.Add(di).Add(dj)
+	pixelSample := pixelCenter.Add(c.pixelSampleSquare())
+
+	rayOrigin := c.Center
+	rayDirection := pixelSample.Subtract(rayOrigin)
+
+	return Ray{Origin: rayOrigin, Direction: rayDirection}
+}
+
+// Returns a random point in the square surrounding a pixel at the origin.
+func (c *Camera) pixelSampleSquare() Vec3 {
+	px := -0.5 + rand.Float64()
+	py := -0.5 + rand.Float64()
+
+	dx := c.deltaU.Multiply(px)
+	dy := c.deltaV.Multiply(py)
+
+	return dx.Add(dy)
+}
+
+// Determine the ray color based on the object it hits, it any.
 func (c *Camera) rayColor(ray Ray, world *Hittables) Color {
 	if h, ok := world.Hit(ray, NewInterval(0, math.Inf(1))); ok {
 		return NewColor(h.N.Add(Vec3{1, 1, 1}).Multiply(0.5))
 	}
 
 	a := 0.5 * (ray.Direction.Unit().Y() + 1.0)
+	v := Vec3{1.0, 1.0, 1.0}.Multiply(1.0 - a).
+		Add(Vec3{0.5, 0.7, 1.0}.Multiply(a))
 
-	return NewColor(
-		Vec3{1.0, 1.0, 1.0}.Multiply(1.0 - a).
-			Add(Vec3{0.5, 0.7, 1.0}.Multiply(a)),
-	)
+	return NewColor(v)
 }

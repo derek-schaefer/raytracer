@@ -6,18 +6,22 @@ import (
 	r "github.com/derek-schaefer/raytracer"
 )
 
+func TestNewCamera(t *testing.T) {}
+
 func TestCameraRender(t *testing.T) {
 	world := r.NewHittables()
 
 	world.Add(r.Sphere{Center: r.Point3{0, 0, -1}, Radius: 0.5})
 
-	camera := r.Camera{
-		AspectRatio:    16.0 / 9.0,
-		Center:         r.Point3{0, 0, 0},
-		FocalLength:    1.0,
-		ImageWidth:     400,
-		ViewportHeight: 2.0,
-	}
+	camera := r.NewCamera(
+		r.CameraOptions{
+			AspectRatio:    16.0 / 9.0,
+			Center:         r.Point3{0, 0, 0},
+			FocalLength:    1.0,
+			ImageWidth:     400,
+			ViewportHeight: 2.0,
+		},
+	)
 
 	image := camera.Render(world)
 

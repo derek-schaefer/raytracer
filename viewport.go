@@ -26,7 +26,7 @@ func (v Viewport) DeltaV(h float64) Vec3 {
 }
 
 // Location of the upper left pixel.
-func (v Viewport) Origin(c Camera) Point3 {
+func (v Viewport) Origin(c *Camera) Point3 {
 	return c.Center.Subtract(Vec3{0, 0, c.FocalLength}).
 		Subtract(v.U().Divide(2)).
 		Subtract(v.V().Divide(2))
