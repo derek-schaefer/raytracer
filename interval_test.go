@@ -55,6 +55,30 @@ func TestIntervalSurrounds(t *testing.T) {
 	}
 }
 
+func TestIntervalClamp(t *testing.T) {
+	i := r.NewInterval(-1, 1)
+
+	if i.Clamp(-1.5) != -1 {
+		t.Fail()
+	}
+
+	if i.Clamp(-1) != -1 {
+		t.Fail()
+	}
+
+	if i.Clamp(0) != 0 {
+		t.Fail()
+	}
+
+	if i.Clamp(1) != 1 {
+		t.Fail()
+	}
+
+	if i.Clamp(1.5) != 1 {
+		t.Fail()
+	}
+}
+
 func TestEmptyInterval(t *testing.T) {
 	i := r.EmptyInterval()
 
