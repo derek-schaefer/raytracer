@@ -98,6 +98,16 @@ func (v Vec3) Multiply(t float64) Vec3 {
 	return v
 }
 
+func (v Vec3) MultiplyV(o Vec3) Vec3 {
+	var t Vec3
+
+	for i := 0; i < len(v); i++ {
+		t[i] = v[i] * o[i]
+	}
+
+	return t
+}
+
 func (v Vec3) Divide(t float64) Vec3 {
 	return v.Multiply(1 / t)
 }
@@ -128,6 +138,20 @@ func (v Vec3) Dot(o Vec3) float64 {
 	}
 
 	return t
+}
+
+func (v Vec3) NearZero() bool {
+	for i := 0; i < len(v); i++ {
+		if math.Abs(v[i]) >= 1e-8 {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (v Vec3) Reflect(n Vec3) Vec3 {
+	return v.Subtract(n.Multiply(2 * v.Dot(n)))
 }
 
 func (v Vec3) String() string {

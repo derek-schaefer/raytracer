@@ -190,6 +190,16 @@ func TestVec3Multiply(t *testing.T) {
 	}
 }
 
+func TestVec3MultiplyV(t *testing.T) {
+	v1 := r.NewVec3(2, 3, 4)
+
+	v2 := r.NewVec3(3, 4, 5)
+
+	if v1.MultiplyV(v2) != r.NewVec3(6, 12, 20) {
+		t.Fail()
+	}
+}
+
 func TestVec3Divide(t *testing.T) {
 	v1 := r.Vec3{2, 4, 8}
 
@@ -238,6 +248,10 @@ func TestVec3Dot(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestVec3Reflect(t *testing.T) {}
+
+func TestVec3NearZero(t *testing.T) {}
 
 func TestVec3String(t *testing.T) {
 	v := r.Vec3{1, 2, 3}
