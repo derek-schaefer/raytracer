@@ -10,8 +10,9 @@ type CameraOptions struct {
 	Center         Point3
 	FocalLength    float64
 	ImageWidth     int
-	ViewportHeight float64
+	MaxDepth       int
 	Samples        int
+	ViewportHeight float64
 }
 
 type Camera struct {
@@ -20,9 +21,9 @@ type Camera struct {
 	deltaU      Vec3
 	deltaV      Vec3
 	imageHeight int
-	vorigin     Vec3
 	iorigin     Vec3
 	viewport    Viewport
+	vorigin     Vec3
 }
 
 func NewCamera(options CameraOptions) *Camera {
@@ -41,7 +42,7 @@ func (c *Camera) Render(world *Hittables) *Image {
 
 			for s := 0; s < c.Samples; s++ {
 				ray := c.getRay(i, j)
-				pixel = pixel.Add(c.rayColor(ray, world).V)
+				pixel = pixel.Add(c.rayColor(ray, c.MaxDepth, world).V)
 			}
 
 			scale := 1.0 / float64(c.Samples)
@@ -105,9 +106,15 @@ func (c *Camera) pixelSampleSquare() Vec3 {
 }
 
 // Determine the ray color based on the object it hits, it any.
-func (c *Camera) rayColor(ray Ray, world *Hittables) Color {
-	if h, ok := world.Hit(ray, NewInterval(0, math.Inf(1))); ok {
-		return NewColor(h.N.Add(Vec3{1, 1, 1}).Multiply(0.5))
+func (c *Camera) rayColor(ray Ray, depth int, world *Hittables) Color {
+	if depth <= 0 {
+		return NewColor(NewVec3(0, 0, 0))
+	}
+
+	// Near zero min value to avoid shadow acne due to floating point errors
+	if h, ok := world.Hit(ray, NewInterval(0.001, math.Inf(1))); ok {
+		direction := h.N.Add(RandomUnitVec3())
+		return NewColor(c.rayColor(Ray{h.P, direction}, depth-1, world).V.Multiply(0.5))
 	}
 
 	a := 0.5 * (ray.Direction.Unit().Y() + 1.0)

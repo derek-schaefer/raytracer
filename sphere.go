@@ -10,7 +10,6 @@ type Sphere struct {
 }
 
 func (s Sphere) Hit(r Ray, rt Interval) (Hit, bool) {
-
 	oc := r.Origin.Subtract(s.Center)
 	a := r.Direction.LengthSquared()
 	halfB := oc.Dot(r.Direction)

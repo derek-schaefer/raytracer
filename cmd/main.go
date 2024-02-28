@@ -11,8 +11,9 @@ const (
 	aspectRatio     = 16.0 / 9.0
 	focalLength     = 1.0
 	imageWidth      = 400
-	viewportHeight  = 2.0
+	maxDepth        = 50
 	samplesPerPixel = 100
+	viewportHeight  = 2.0
 )
 
 func main() {
@@ -27,8 +28,9 @@ func main() {
 			Center:         r.Point3{0, 0, 0},
 			FocalLength:    focalLength,
 			ImageWidth:     imageWidth,
-			ViewportHeight: viewportHeight,
+			MaxDepth:       maxDepth,
 			Samples:        samplesPerPixel,
+			ViewportHeight: viewportHeight,
 		},
 	)
 
