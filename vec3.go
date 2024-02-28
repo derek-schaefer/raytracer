@@ -3,12 +3,45 @@ package raytracer
 import (
 	"fmt"
 	"math"
+	"math/rand"
 )
 
 type Vec3 [3]float64
 
 func NewVec3(x, y, z float64) Vec3 {
 	return Vec3{x, y, z}
+}
+
+func RandomVec3() Vec3 {
+	return NewVec3(rand.Float64(), rand.Float64(), rand.Float64())
+}
+
+func RandomRangeVec3(min, max float64) Vec3 {
+	return NewVec3(RandFloat64(min, max), RandFloat64(min, max), RandFloat64(min, max))
+}
+
+func RandomUnitSphereVec3() Vec3 {
+	for {
+		p := RandomRangeVec3(-1, 1)
+
+		if p.LengthSquared() < 1 {
+			return p
+		}
+	}
+}
+
+func RandomUnitVec3() Vec3 {
+	return RandomUnitSphereVec3().Unit()
+}
+
+func RandomHemisphereVec3(normal Vec3) Vec3 {
+	v := RandomUnitVec3()
+
+	if v.Dot(normal) > 0 {
+		return v
+	} else {
+		return v.Multiply(-1)
+	}
 }
 
 func (v Vec3) X() float64 {
@@ -70,7 +103,13 @@ func (v Vec3) Divide(t float64) Vec3 {
 }
 
 func (v Vec3) LengthSquared() float64 {
-	return v.X()*v.X() + v.Y()*v.Y() + v.Z()*v.Z()
+	var t float64
+
+	for i := 0; i < len(v); i++ {
+		t += v[i] * v[i]
+	}
+
+	return t
 }
 
 func (v Vec3) Length() float64 {

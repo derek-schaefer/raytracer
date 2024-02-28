@@ -2,6 +2,7 @@ package raytracer_test
 
 import (
 	"math"
+	"math/big"
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
@@ -19,6 +20,86 @@ func TestNewVec3(t *testing.T) {
 	}
 
 	if v.Z() != 3 {
+		t.Fail()
+	}
+}
+
+func TestRandomVec3(t *testing.T) {
+	min := 0.0
+	max := 1.0
+
+	v := r.RandomVec3()
+
+	x := v.X()
+	y := v.Y()
+	z := v.Z()
+
+	if !(min <= x && x <= max) {
+		t.Fail()
+	}
+
+	if !(min <= y && y <= max) {
+		t.Fail()
+	}
+
+	if !(min <= z && z <= max) {
+		t.Fail()
+	}
+}
+
+func TestRandomUnitSphereVec3(t *testing.T) {
+	v := r.RandomUnitSphereVec3()
+
+	if v.LengthSquared() >= 1 {
+		t.Fail()
+	}
+}
+
+func TestRandomUnitVec3(t *testing.T) {
+	v := r.RandomUnitVec3()
+
+	f := big.NewFloat(v.Length())
+
+	if f.Cmp(big.NewFloat(1)) > 0 {
+		t.Fail()
+	}
+
+	for i := 0; i < len(v); i++ {
+		if !(-1 <= v[i] && v[i] <= 1) {
+			t.Fail()
+		}
+	}
+}
+
+func TestRandomHemisphereVec3(t *testing.T) {
+	s := r.RandomUnitSphereVec3()
+
+	v := r.RandomHemisphereVec3(s)
+
+	if v.Dot(s) <= 0 {
+		t.Fail()
+	}
+}
+
+func TestRandomRangeVec3(t *testing.T) {
+	min := 2.0
+	max := 3.0
+
+	v := r.RandomRangeVec3(min, max)
+
+	x := v.X()
+	y := v.Y()
+	z := v.Z()
+
+	if !(min <= x && x <= max) {
+		t.Fail()
+	}
+
+	if !(min <= y && y <= max) {
+		t.Fail()
+	}
+
+	if !(min <= z && z <= max) {
 		t.Fail()
 	}
 }
