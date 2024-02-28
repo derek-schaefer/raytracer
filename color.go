@@ -3,6 +3,7 @@ package raytracer
 import (
 	"bytes"
 	"fmt"
+	"math"
 )
 
 var (
@@ -15,6 +16,17 @@ type Color struct {
 
 func NewColor(v Vec3) Color {
 	return Color{v}
+}
+
+// Convert the color from linear space to gamma space.
+func (c Color) LinearToGamma() Color {
+	var v Vec3
+
+	for i := 0; i < len(c.V); i++ {
+		v[i] = math.Sqrt(c.V[i])
+	}
+
+	return NewColor(v)
 }
 
 // Write the color in PPM format to a buffer.

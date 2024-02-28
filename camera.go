@@ -50,7 +50,7 @@ func (c *Camera) Render(world *Hittables) *Image {
 			pixel.SetY(pixel.Y() * scale)
 			pixel.SetZ(pixel.Z() * scale)
 
-			image.Set(i, j, NewColor(pixel))
+			image.Set(i, j, NewColor(pixel).LinearToGamma())
 		}
 	}
 
