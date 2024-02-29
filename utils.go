@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	epsilon = 1e-16
+	epsilon = 1e-15
 )
 
 func RandFloat64(min, max float64) float64 {

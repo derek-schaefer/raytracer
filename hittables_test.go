@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewHittables(t *testing.T) {
@@ -12,13 +13,8 @@ func TestNewHittables(t *testing.T) {
 
 	hs := r.NewHittables(s)
 
-	if len(hs.Objects) != 1 {
-		t.Fail()
-	}
-
-	if hs.Objects[0] != s {
-		t.Fail()
-	}
+	assert.Equal(t, len(hs.Objects), 1)
+	assert.Equal(t, hs.Objects[0], s)
 }
 
 func TestHittablesAdd(t *testing.T) {
@@ -26,15 +22,12 @@ func TestHittablesAdd(t *testing.T) {
 
 	hs := r.NewHittables()
 
-	if len(hs.Objects) != 0 {
-		t.Fail()
-	}
+	assert.Equal(t, len(hs.Objects), 0)
 
 	hs.Add(s)
 
-	if hs.Objects[0] != s {
-		t.Fail()
-	}
+	assert.Equal(t, len(hs.Objects), 1)
+	assert.Equal(t, hs.Objects[0], s)
 }
 
 func TestHittablesClear(t *testing.T) {
@@ -42,15 +35,11 @@ func TestHittablesClear(t *testing.T) {
 
 	hs := r.NewHittables(s)
 
-	if len(hs.Objects) != 1 {
-		t.Fail()
-	}
+	assert.Equal(t, len(hs.Objects), 1)
 
 	hs.Clear()
 
-	if len(hs.Objects) != 0 {
-		t.Fail()
-	}
+	assert.Equal(t, len(hs.Objects), 0)
 }
 
 func TestHittablesHit(t *testing.T) {
@@ -63,14 +52,10 @@ func TestHittablesHit(t *testing.T) {
 
 	h, ok := hs.Hit(ray, rayt)
 
-	if !ok {
-		t.Fail()
-	}
+	assert.True(t, ok)
 
 	p := r.Point3{0, 0, 2}
 	n := r.Vec3{0, 0, -1}
 
-	if h != (r.Hit{P: p, N: n, T: 2, F: false}) {
-		t.Fail()
-	}
+	assert.Equal(t, h, r.Hit{P: p, N: n, T: 2, F: false})
 }

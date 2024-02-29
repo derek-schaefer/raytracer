@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestLambertianScatter(t *testing.T) {
@@ -14,23 +15,9 @@ func TestLambertianScatter(t *testing.T) {
 
 	s, a, ok := l.Scatter(i, h)
 
-	if !ok {
-		t.Fail()
-	}
-
-	if a != c {
-		t.Fail()
-	}
-
-	if s.Origin != i.Origin {
-		t.Fail()
-	}
-
-	if s.Direction.NearZero() {
-		t.Fail()
-	}
-
-	if !r.NearlyEqual(s.Direction.Length(), 1) {
-		t.Fail()
-	}
+	assert.True(t, ok)
+	assert.Equal(t, a, c)
+	assert.Equal(t, s.Origin, i.Origin)
+	assert.False(t, s.Direction.NearZero())
+	assert.True(t, r.NearlyEqual(s.Direction.Length(), 1))
 }

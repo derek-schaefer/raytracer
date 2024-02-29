@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRandomFloat64(t *testing.T) {
@@ -13,21 +14,11 @@ func TestRandomFloat64(t *testing.T) {
 
 	n := r.RandFloat64(min, max)
 
-	if !(min <= n && n <= max) {
-		t.Fail()
-	}
+	assert.True(t, min <= n && n <= max)
 }
 
 func TestNearlyEqual(t *testing.T) {
-	if r.NearlyEqual(0, 1) {
-		t.Fail()
-	}
-
-	if !r.NearlyEqual(math.Pow(2, 53), math.Pow(2, 53)-1) {
-		t.Fail()
-	}
-
-	if !r.NearlyEqual(math.Pow(2, 53), math.Pow(2, 53)+1) {
-		t.Fail()
-	}
+	assert.False(t, r.NearlyEqual(0, 1))
+	assert.True(t, r.NearlyEqual(math.Pow(2, 53), math.Pow(2, 53)-1))
+	assert.True(t, r.NearlyEqual(math.Pow(2, 53), math.Pow(2, 53)+1))
 }

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMetalScatter(t *testing.T) {
@@ -14,15 +15,7 @@ func TestMetalScatter(t *testing.T) {
 
 	s, a, ok := m.Scatter(i, h)
 
-	if a != c {
-		t.Errorf("Expected `a` to equal %s, got: %s", c, a)
-	}
-
-	if s.Origin != h.P {
-		t.Errorf("Expected `s.Origin` to equal %s, got: %s", h.P, s.Origin)
-	}
-
-	if !(ok || !r.NearlyEqual(s.Direction.Length(), 1)) {
-		t.Errorf("Expected the scattered ray to continue or be absorbed consistently")
-	}
+	assert.Equal(t, a, c)
+	assert.Equal(t, s.Origin, h.P)
+	assert.True(t, ok || !r.NearlyEqual(s.Direction.Length(), 1))
 }

@@ -1,26 +1,20 @@
 package raytracer_test
 
 import (
+	"log"
 	"math"
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewVec3(t *testing.T) {
 	v := r.NewVec3(1, 2, 3)
 
-	if v.X() != 1 {
-		t.Fail()
-	}
-
-	if v.Y() != 2 {
-		t.Fail()
-	}
-
-	if v.Z() != 3 {
-		t.Fail()
-	}
+	assert.Equal(t, v.X(), float64(1))
+	assert.Equal(t, v.Y(), float64(2))
+	assert.Equal(t, v.Z(), float64(3))
 }
 
 func TestRandomVec3(t *testing.T) {
@@ -33,25 +27,15 @@ func TestRandomVec3(t *testing.T) {
 	y := v.Y()
 	z := v.Z()
 
-	if !(min <= x && x <= max) {
-		t.Fail()
-	}
-
-	if !(min <= y && y <= max) {
-		t.Fail()
-	}
-
-	if !(min <= z && z <= max) {
-		t.Fail()
-	}
+	assert.True(t, min <= x && x <= max)
+	assert.True(t, min <= y && y <= max)
+	assert.True(t, min <= z && z <= max)
 }
 
 func TestRandomUnitSphereVec3(t *testing.T) {
 	v := r.RandomUnitSphereVec3()
 
-	if v.LengthSquared() >= 1 {
-		t.Fail()
-	}
+	assert.Less(t, v.LengthSquared(), float64(1))
 }
 
 func TestRandomUnitVec3(t *testing.T) {
@@ -59,14 +43,11 @@ func TestRandomUnitVec3(t *testing.T) {
 
 	f := v.Length()
 
-	if !r.NearlyEqual(f, 1) {
-		t.Fail()
-	}
+	log.Println(f)
+	assert.True(t, r.NearlyEqual(f, 1))
 
 	for i := 0; i < len(v); i++ {
-		if !(-1 <= v[i] && v[i] <= 1) {
-			t.Fail()
-		}
+		assert.True(t, -1 <= v[i] && v[i] <= 1)
 	}
 }
 
@@ -75,9 +56,7 @@ func TestRandomHemisphereVec3(t *testing.T) {
 
 	v := r.RandomHemisphereVec3(s)
 
-	if v.Dot(s) <= 0 {
-		t.Fail()
-	}
+	assert.Greater(t, v.Dot(s), float64(0))
 }
 
 func TestRandomRangeVec3(t *testing.T) {
@@ -90,41 +69,27 @@ func TestRandomRangeVec3(t *testing.T) {
 	y := v.Y()
 	z := v.Z()
 
-	if !(min <= x && x <= max) {
-		t.Fail()
-	}
-
-	if !(min <= y && y <= max) {
-		t.Fail()
-	}
-
-	if !(min <= z && z <= max) {
-		t.Fail()
-	}
+	assert.True(t, min <= x && x <= max)
+	assert.True(t, min <= y && y <= max)
+	assert.True(t, min <= z && z <= max)
 }
 
 func TestVec3X(t *testing.T) {
 	v := r.Vec3{1, 0, 0}
 
-	if v.X() != 1 {
-		t.Fail()
-	}
+	assert.Equal(t, v.X(), float64(1))
 }
 
 func TestVec3Y(t *testing.T) {
 	v := r.Vec3{0, 1, 0}
 
-	if v.Y() != 1 {
-		t.Fail()
-	}
+	assert.Equal(t, v.Y(), float64(1))
 }
 
 func TestVec3Z(t *testing.T) {
 	v := r.Vec3{0, 0, 1}
 
-	if v.Z() != 1 {
-		t.Fail()
-	}
+	assert.Equal(t, v.Z(), float64(1))
 }
 
 func TestVec3SetY(t *testing.T) {
@@ -132,9 +97,7 @@ func TestVec3SetY(t *testing.T) {
 
 	v.SetY(1)
 
-	if v.Y() != 1 {
-		t.Fail()
-	}
+	assert.Equal(t, v.Y(), float64(1))
 }
 
 func TestVec3SetZ(t *testing.T) {
@@ -142,9 +105,7 @@ func TestVec3SetZ(t *testing.T) {
 
 	v.SetZ(1)
 
-	if v.Z() != 1 {
-		t.Fail()
-	}
+	assert.Equal(t, v.Z(), float64(1))
 }
 
 func TestVec3SetX(t *testing.T) {
@@ -152,9 +113,7 @@ func TestVec3SetX(t *testing.T) {
 
 	v.SetX(1)
 
-	if v.X() != 1 {
-		t.Fail()
-	}
+	assert.Equal(t, v.X(), float64(1))
 }
 
 func TestVec3Add(t *testing.T) {
@@ -163,9 +122,7 @@ func TestVec3Add(t *testing.T) {
 
 	v3 := v1.Add(v2)
 
-	if v3 != (r.Vec3{2, 3, 4}) {
-		t.Fail()
-	}
+	assert.Equal(t, v3, r.Vec3{2, 3, 4})
 }
 
 func TestVec3Subtract(t *testing.T) {
@@ -174,9 +131,7 @@ func TestVec3Subtract(t *testing.T) {
 
 	v3 := v1.Subtract(v2)
 
-	if v3 != (r.Vec3{0, 1, 2}) {
-		t.Fail()
-	}
+	assert.Equal(t, v3, r.Vec3{0, 1, 2})
 }
 
 func TestVec3Multiply(t *testing.T) {
@@ -184,9 +139,7 @@ func TestVec3Multiply(t *testing.T) {
 
 	v2 := v1.Multiply(2)
 
-	if v2 != (r.Vec3{2, 4, 6}) {
-		t.Fail()
-	}
+	assert.Equal(t, v2, r.Vec3{2, 4, 6})
 }
 
 func TestVec3MultiplyV(t *testing.T) {
@@ -194,9 +147,7 @@ func TestVec3MultiplyV(t *testing.T) {
 
 	v2 := r.NewVec3(3, 4, 5)
 
-	if v1.MultiplyV(v2) != r.NewVec3(6, 12, 20) {
-		t.Fail()
-	}
+	assert.Equal(t, v1.MultiplyV(v2), r.NewVec3(6, 12, 20))
 }
 
 func TestVec3Divide(t *testing.T) {
@@ -204,9 +155,7 @@ func TestVec3Divide(t *testing.T) {
 
 	v2 := v1.Divide(2)
 
-	if v2 != (r.Vec3{1, 2, 4}) {
-		t.Fail()
-	}
+	assert.Equal(t, v2, r.Vec3{1, 2, 4})
 }
 
 func TestVec3Unit(t *testing.T) {
@@ -216,25 +165,19 @@ func TestVec3Unit(t *testing.T) {
 	n2 := n1 / math.Sqrt(math.Pow(n1, 3))
 	v2 := v1.Unit()
 
-	if v2 != (r.Vec3{n2, n2, n2}) {
-		t.Fail()
-	}
+	assert.Equal(t, v2, r.Vec3{n2, n2, n2})
 }
 
 func TestVec3LengthSquared(t *testing.T) {
 	v := r.Vec3{2, 3, 4}
 
-	if v.LengthSquared() != 29 {
-		t.Fail()
-	}
+	assert.Equal(t, v.LengthSquared(), float64(29))
 }
 
 func TestVec3Length(t *testing.T) {
 	v := r.Vec3{2, 3, 4}
 
-	if v.Length() != math.Sqrt(29) {
-		t.Fail()
-	}
+	assert.Equal(t, v.Length(), math.Sqrt(29))
 }
 
 func TestVec3Dot(t *testing.T) {
@@ -243,19 +186,19 @@ func TestVec3Dot(t *testing.T) {
 
 	v3 := v1.Dot(v2)
 
-	if v3 != 20 {
-		t.Fail()
-	}
+	assert.Equal(t, v3, float64(20))
 }
 
-func TestVec3Reflect(t *testing.T) {}
+func TestVec3Reflect(t *testing.T) {
+	t.Skip()
+}
 
-func TestVec3NearZero(t *testing.T) {}
+func TestVec3NearZero(t *testing.T) {
+	t.Skip()
+}
 
 func TestVec3String(t *testing.T) {
 	v := r.Vec3{1, 2, 3}
 
-	if v.String() != "Vec3(1.000000, 2.000000, 3.000000)" {
-		t.Fail()
-	}
+	assert.Equal(t, v.String(), "Vec3(1.000000, 2.000000, 3.000000)")
 }

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestImageSet(t *testing.T) {
@@ -12,9 +13,7 @@ func TestImageSet(t *testing.T) {
 
 	img.Set(3, 2, r.NewColor(r.Vec3{0, 0, 255}))
 
-	if img.Pixels[19] != r.NewColor(r.Vec3{0, 0, 255}) {
-		t.Fail()
-	}
+	assert.Equal(t, img.Pixels[19], r.NewColor(r.Vec3{0, 0, 255}))
 }
 
 func TestImageGet(t *testing.T) {
@@ -22,9 +21,7 @@ func TestImageGet(t *testing.T) {
 
 	img.Pixels[19] = r.NewColor(r.Vec3{0, 0, 255})
 
-	if img.Get(3, 2) != r.NewColor(r.Vec3{0, 0, 255}) {
-		t.Fail()
-	}
+	assert.Equal(t, img.Get(3, 2), r.NewColor(r.Vec3{0, 0, 255}))
 }
 
 func TestImageWritePPM(t *testing.T) {
@@ -40,7 +37,5 @@ func TestImageWritePPM(t *testing.T) {
 
 	img.WritePPM(&buf)
 
-	if buf.String() != "P3\n2 2\n255\n0 0 0\n1 0 0\n0 1 0\n1 1 0\n" {
-		t.Fail()
-	}
+	assert.Equal(t, buf.String(), "P3\n2 2\n255\n0 0 0\n1 0 0\n0 1 0\n1 1 0\n")
 }

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestColorLinearToGamma(t *testing.T) {
@@ -14,9 +15,7 @@ func TestColorLinearToGamma(t *testing.T) {
 	c2 := c1.LinearToGamma()
 
 	for i := 0; i < len(c2.V); i++ {
-		if c1.V[i] != math.Pow(c2.V[i], 2) {
-			t.Fail()
-		}
+		assert.Equal(t, c1.V[i], math.Pow(c2.V[i], 2))
 	}
 }
 
@@ -27,9 +26,7 @@ func TestColorWritePPM(t *testing.T) {
 
 	c1.WritePPM(&b)
 
-	if b.String() != "5 10 20\n" {
-		t.Fail()
-	}
+	assert.Equal(t, b.String(), "5 10 20\n")
 
 	c2 := r.NewColor(r.NewVec3(-1, 0, 2))
 
@@ -37,7 +34,5 @@ func TestColorWritePPM(t *testing.T) {
 
 	c2.WritePPM(&b)
 
-	if b.String() != "0 0 255\n" {
-		t.Fail()
-	}
+	assert.Equal(t, b.String(), "0 0 255\n")
 }

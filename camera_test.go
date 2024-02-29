@@ -4,9 +4,12 @@ import (
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestNewCamera(t *testing.T) {}
+func TestNewCamera(t *testing.T) {
+	t.Skip()
+}
 
 func TestCameraRender(t *testing.T) {
 	world := r.NewHittables()
@@ -25,15 +28,7 @@ func TestCameraRender(t *testing.T) {
 
 	image := camera.Render(world)
 
-	if image.Width != 400 {
-		t.Fail()
-	}
-
-	if image.Height != 225 {
-		t.Fail()
-	}
-
-	if len(image.Pixels) != 400*225 {
-		t.Fail()
-	}
+	assert.Equal(t, image.Width, 400)
+	assert.Equal(t, image.Height, 225)
+	assert.Equal(t, len(image.Pixels), 400*225)
 }

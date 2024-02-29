@@ -5,5 +5,5 @@ import (
 )
 
 func TestHitSetFaceNormal(t *testing.T) {
-	// TODO
+	t.Skip()
 }
