@@ -21,8 +21,8 @@ func main() {
 
 	materialGround := r.NewLambertian(r.NewColor(r.NewVec3(0.8, 0.8, 0.0)))
 	materialCenter := r.NewLambertian(r.NewColor(r.NewVec3(0.7, 0.3, 0.3)))
-	materialLeft := r.NewMetal(r.NewColor(r.NewVec3(0.8, 0.8, 0.8)))
-	materialRight := r.NewMetal(r.NewColor(r.NewVec3(0.8, 0.6, 0.2)))
+	materialLeft := r.NewMetal(r.NewColor(r.NewVec3(0.8, 0.8, 0.8)), 0.3)
+	materialRight := r.NewMetal(r.NewColor(r.NewVec3(0.8, 0.6, 0.2)), 1.0)
 
 	world.Add(r.NewSphere(r.NewPoint3(0.0, -100.5, -1.0), 100, materialGround))
 	world.Add(r.NewSphere(r.NewPoint3(0.0, 0.0, -1.0), 0.5, materialCenter))
