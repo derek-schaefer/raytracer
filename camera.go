@@ -108,13 +108,15 @@ func (c *Camera) pixelSampleSquare() Vec3 {
 // Determine the ray color based on the object it hits, it any.
 func (c *Camera) rayColor(ray Ray, depth int, world *Hittables) Color {
 	if depth <= 0 {
-		return NewColor(NewVec3(0, 0, 0))
+		return ColorBlack
 	}
 
 	// Near zero min value to avoid shadow acne due to floating point errors
 	if h, ok := world.Hit(ray, NewInterval(0.001, math.Inf(1))); ok {
-		direction := h.N.Add(RandomUnitVec3())
-		return NewColor(c.rayColor(Ray{h.P, direction}, depth-1, world).V.Multiply(0.5))
+		if scattered, attenuation, ok := h.Material.Scatter(ray, h); ok {
+			return NewColor(attenuation.V.MultiplyV(c.rayColor(scattered, depth-1, world).V))
+		}
+		return ColorBlack
 	}
 
 	a := 0.5 * (ray.Direction.Unit().Y() + 1.0)

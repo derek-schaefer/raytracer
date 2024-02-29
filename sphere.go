@@ -5,8 +5,13 @@ import (
 )
 
 type Sphere struct {
-	Center Point3
-	Radius float64
+	Center   Point3
+	Radius   float64
+	Material Material
+}
+
+func NewSphere(center Point3, radius float64, material Material) Sphere {
+	return Sphere{Center: center, Radius: radius, Material: material}
 }
 
 func (s Sphere) Hit(r Ray, rt Interval) (Hit, bool) {
@@ -35,6 +40,7 @@ func (s Sphere) Hit(r Ray, rt Interval) (Hit, bool) {
 
 	hit.T = root
 	hit.P = r.At(hit.T)
+	hit.Material = s.Material
 
 	hit.SetFaceNormal(r, hit.P.Subtract(s.Center).Divide(s.Radius))
 

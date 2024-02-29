@@ -2,7 +2,6 @@ package raytracer_test
 
 import (
 	"math"
-	"math/big"
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
@@ -58,9 +57,9 @@ func TestRandomUnitSphereVec3(t *testing.T) {
 func TestRandomUnitVec3(t *testing.T) {
 	v := r.RandomUnitVec3()
 
-	f := big.NewFloat(v.Length())
+	f := v.Length()
 
-	if f.Cmp(big.NewFloat(1)) > 0 {
+	if !r.NearlyEqual(f, 1) {
 		t.Fail()
 	}
 

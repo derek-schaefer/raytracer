@@ -8,6 +8,8 @@ import (
 
 var (
 	intensity = NewInterval(0.0, 0.999)
+
+	ColorBlack = NewColor(NewVec3(0, 0, 0))
 )
 
 type Color struct {

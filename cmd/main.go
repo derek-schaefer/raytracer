@@ -19,13 +19,20 @@ const (
 func main() {
 	world := r.NewHittables()
 
-	world.Add(r.Sphere{Center: r.Point3{0, 0, -1}, Radius: 0.5})
-	world.Add(r.Sphere{Center: r.Point3{0, -100.5, -1}, Radius: 100})
+	materialGround := r.NewLambertian(r.NewColor(r.NewVec3(0.8, 0.8, 0.0)))
+	materialCenter := r.NewLambertian(r.NewColor(r.NewVec3(0.7, 0.3, 0.3)))
+	materialLeft := r.NewMetal(r.NewColor(r.NewVec3(0.8, 0.8, 0.8)))
+	materialRight := r.NewMetal(r.NewColor(r.NewVec3(0.8, 0.6, 0.2)))
+
+	world.Add(r.NewSphere(r.NewPoint3(0.0, -100.5, -1.0), 100, materialGround))
+	world.Add(r.NewSphere(r.NewPoint3(0.0, 0.0, -1.0), 0.5, materialCenter))
+	world.Add(r.NewSphere(r.NewPoint3(-1.0, 0.0, -1.0), 0.5, materialLeft))
+	world.Add(r.NewSphere(r.NewPoint3(1.0, 0.0, -1.0), 0.5, materialRight))
 
 	camera := r.NewCamera(
 		r.CameraOptions{
 			AspectRatio:    aspectRatio,
-			Center:         r.Point3{0, 0, 0},
+			Center:         r.NewPoint3(0, 0, 0),
 			FocalLength:    focalLength,
 			ImageWidth:     imageWidth,
 			MaxDepth:       maxDepth,

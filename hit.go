@@ -9,6 +9,8 @@ type Hit struct {
 	T float64
 	// Front facing
 	F bool
+
+	Material Material
 }
 
 // Sets the hit record normal vector.
