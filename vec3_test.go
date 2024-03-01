@@ -1,7 +1,6 @@
 package raytracer_test
 
 import (
-	"log"
 	"math"
 	"testing"
 
@@ -43,7 +42,6 @@ func TestRandomUnitVec3(t *testing.T) {
 
 	f := v.Length()
 
-	log.Println(f)
 	assert.True(t, r.NearlyEqual(f, 1))
 
 	for i := 0; i < len(v); i++ {
@@ -190,11 +188,35 @@ func TestVec3Dot(t *testing.T) {
 }
 
 func TestVec3Reflect(t *testing.T) {
-	t.Skip()
+	v1 := r.NewVec3(0.1, 0.1, 0.1)
+	v2 := r.NewVec3(0.2, 0.2, 0.2)
+
+	n := 0.076
+
+	assert.Equal(t, v1.Reflect(v2), r.NewVec3(n, n, n))
 }
 
 func TestVec3NearZero(t *testing.T) {
-	t.Skip()
+	v1 := r.NewVec3(0, 0, 0)
+
+	assert.True(t, v1.NearZero())
+
+	for i := 0; i < 3; i++ {
+		var v2 r.Vec3
+
+		v2[i] = math.SmallestNonzeroFloat64
+
+		assert.False(t, v2.NearZero())
+	}
+}
+
+func TestVec3Refract(t *testing.T) {
+	v1 := r.NewVec3(0.1, 0.1, 0.1)
+	v2 := r.NewVec3(0.2, 0.2, 0.2)
+
+	n := -0.06270264507705078
+
+	assert.Equal(t, v1.Refract(v2, 1.5), r.NewVec3(n, n, n))
 }
 
 func TestVec3String(t *testing.T) {

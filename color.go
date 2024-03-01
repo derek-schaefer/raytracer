@@ -10,6 +10,7 @@ var (
 	intensity = NewInterval(0.0, 0.999)
 
 	ColorBlack = NewColor(NewVec3(0, 0, 0))
+	ColorWhite = NewColor(NewVec3(1, 1, 1))
 )
 
 type Color struct {

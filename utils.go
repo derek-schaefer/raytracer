@@ -13,6 +13,7 @@ func RandFloat64(min, max float64) float64 {
 	return min + rand.Float64()*(max-min)
 }
 
+// See: https://stackoverflow.com/a/76386543
 func NearlyEqual(a, b float64) bool {
 	if a == b {
 		return true

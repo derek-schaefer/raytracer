@@ -142,7 +142,7 @@ func (v Vec3) Dot(o Vec3) float64 {
 
 func (v Vec3) NearZero() bool {
 	for i := 0; i < len(v); i++ {
-		if math.Abs(v[i]) >= 1e-8 {
+		if !NearlyEqual(v[i], 0) {
 			return false
 		}
 	}
@@ -152,6 +152,13 @@ func (v Vec3) NearZero() bool {
 
 func (v Vec3) Reflect(n Vec3) Vec3 {
 	return v.Subtract(n.Multiply(2 * v.Dot(n)))
+}
+
+func (v Vec3) Refract(n Vec3, etaiOverEtat float64) Vec3 {
+	cosTheta := math.Min(v.Multiply(-1).Dot(n), 1)
+	rOutPerp := v.Add(n.Multiply(cosTheta)).Multiply(etaiOverEtat)
+	rOutPara := n.Multiply(-math.Sqrt(math.Abs(1 - rOutPerp.LengthSquared())))
+	return rOutPerp.Add(rOutPara)
 }
 
 func (v Vec3) String() string {
