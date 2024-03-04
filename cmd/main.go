@@ -14,9 +14,9 @@ const (
 	fieldOfView     = 20
 	focalLength     = 1.0
 	focusDistance   = 10.0
-	imageWidth      = 400 // 1200
+	imageWidth      = 800
 	maxDepth        = 50
-	samplesPerPixel = 100 // 500
+	samplesPerPixel = 500
 	viewportHeight  = 2.0
 )
 
