@@ -192,6 +192,15 @@ func TestVec3Dot(t *testing.T) {
 	assert.Equal(t, v3, float64(20))
 }
 
+func TestVec3Cross(t *testing.T) {
+	v1 := r.Vec3{1, 2, 3}
+	v2 := r.Vec3{2, 3, 4}
+
+	v3 := v1.Cross(v2)
+
+	assert.Equal(t, v3, r.NewVec3(-1, 2, -1))
+}
+
 func TestVec3Reflect(t *testing.T) {
 	v1 := r.NewVec3(0.1, 0.1, 0.1)
 	v2 := r.NewVec3(0.2, 0.2, 0.2)

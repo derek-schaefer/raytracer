@@ -17,16 +17,21 @@ func TestCameraRender(t *testing.T) {
 
 	world := r.NewHittables()
 
-	world.Add(r.Sphere{Center: r.Point3{0, 0, -1}, Radius: 0.5})
+	material := r.NewMetal(r.MetalOptions{Albedo: r.NewColor(r.NewVec3(0.8, 0.6, 0.2)), Fuzz: 0.0, Random: random})
+
+	world.Add(r.NewSphere(r.SphereOptions{Center: r.NewPoint3(0, 0, -1), Radius: 0.5, Material: material}))
 
 	camera := r.NewCamera(
 		r.CameraOptions{
-			AspectRatio:    16.0 / 9.0,
-			Center:         r.Point3{0, 0, 0},
-			FocalLength:    1.0,
-			ImageWidth:     400,
-			Random:         random,
-			ViewportHeight: 2.0,
+			AspectRatio: 16.0 / 9.0,
+			FieldOfView: 20,
+			ImageWidth:  400,
+			LookAt:      r.NewPoint3(0, 0, -1),
+			LookFrom:    r.NewPoint3(-2, 2, 1),
+			MaxDepth:    10,
+			Random:      random,
+			Samples:     10,
+			ViewUp:      r.NewPoint3(0, 1, 0),
 		},
 	)
 

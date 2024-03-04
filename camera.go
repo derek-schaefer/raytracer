@@ -1,30 +1,45 @@
 package raytracer
 
 import (
+	"log"
 	"math"
 	"math/rand"
 )
 
 type CameraOptions struct {
-	AspectRatio    float64
-	Center         Point3
-	FocalLength    float64
-	ImageWidth     int
-	MaxDepth       int
-	Random         *rand.Rand
-	Samples        int
-	ViewportHeight float64
+	// Ratio of image width over height
+	AspectRatio float64
+	// Vertical view angle (field of view)
+	FieldOfView float64
+	// Rendered image width in pixel count
+	ImageWidth int
+	// Point camera is looking at
+	LookAt Point3
+	// Point camera is looking from
+	LookFrom Point3
+	// Maximum number of ray bounces into scene
+	MaxDepth int
+	// Pseudo-random number generator
+	Random *rand.Rand
+	// Count of random samples for each pixel
+	Samples int
+	// Camera-relative "up" direction
+	ViewUp Vec3
 }
 
 type Camera struct {
 	CameraOptions
 
-	deltaU      Vec3
-	deltaV      Vec3
 	imageHeight int
-	iorigin     Vec3
-	viewport    Viewport
-	vorigin     Vec3
+
+	center  Point3
+	deltaU  Vec3
+	deltaV  Vec3
+	iorigin Vec3
+
+	u Vec3
+	v Vec3
+	w Vec3
 }
 
 func NewCamera(options CameraOptions) *Camera {
@@ -66,23 +81,34 @@ func (c *Camera) Render(world *Hittables) *Image {
 func (c *Camera) initialize() {
 	c.imageHeight = int(float64(c.ImageWidth) / c.AspectRatio)
 
-	c.viewport = Viewport{
-		Height: c.ViewportHeight,
-		Width:  c.ViewportHeight * float64(c.ImageWidth) / float64(c.imageHeight),
+	if c.imageHeight < 1 {
+		c.imageHeight = 1
 	}
 
-	c.vorigin = c.Center.Subtract(Vec3{0, 0, c.FocalLength}).
-		Subtract(c.viewport.U().Divide(2)).
-		Subtract(c.viewport.V().Divide(2))
+	c.center = c.LookFrom
 
-	c.iorigin = c.vorigin.Add(
-		(c.viewport.DeltaU(float64(c.ImageWidth)).
-			Add(c.viewport.DeltaV(float64(c.imageHeight)))).
-			Multiply(0.5),
-	)
+	focalLength := c.LookFrom.Subtract(c.LookAt).Length()
+	theta := c.FieldOfView * (math.Pi / 180.0)
+	h := math.Tan(theta / 2)
+	viewportHeight := 2 * h * focalLength
+	viewportWidth := viewportHeight * (float64(c.ImageWidth) / float64(c.imageHeight))
 
-	c.deltaU = c.viewport.DeltaU(float64(c.ImageWidth))
-	c.deltaV = c.viewport.DeltaV(float64(c.imageHeight))
+	c.w = c.LookFrom.Subtract(c.LookAt).Unit()
+	c.u = c.ViewUp.Cross(c.w).Unit()
+	c.v = c.w.Cross(c.u)
+
+	viewportU := c.u.Multiply(viewportWidth)
+	viewportV := c.v.Multiply(-1).Multiply(viewportHeight)
+
+	c.deltaU = viewportU.Divide(float64(c.ImageWidth))
+	c.deltaV = viewportV.Divide(float64(c.imageHeight))
+
+	viewportUpperLeft := c.center.
+		Subtract(c.w.Multiply(focalLength)).
+		Subtract(viewportU.Divide(2)).
+		Subtract(viewportV.Divide(2))
+
+	c.iorigin = viewportUpperLeft.Add(c.deltaU.Add(c.deltaV).Multiply(0.5))
 }
 
 // Get a randomly sampled camera ray for the pixel at location i, j.
@@ -93,7 +119,7 @@ func (c *Camera) getRay(i, j int) Ray {
 	pixelCenter := c.iorigin.Add(di).Add(dj)
 	pixelSample := pixelCenter.Add(c.pixelSampleSquare())
 
-	rayOrigin := c.Center
+	rayOrigin := c.center
 	rayDirection := pixelSample.Subtract(rayOrigin)
 
 	return Ray{Origin: rayOrigin, Direction: rayDirection}
@@ -114,6 +140,13 @@ func (c *Camera) pixelSampleSquare() Vec3 {
 func (c *Camera) rayColor(ray Ray, depth int, world *Hittables) Color {
 	if depth <= 0 {
 		return ColorBlack
+	}
+
+	if c == nil {
+		log.Println(c)
+		log.Println(ray)
+		log.Println(depth)
+		log.Println(world)
 	}
 
 	// Near zero min value to avoid shadow acne due to floating point errors

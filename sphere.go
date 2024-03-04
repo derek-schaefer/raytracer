@@ -4,14 +4,18 @@ import (
 	"math"
 )
 
-type Sphere struct {
+type SphereOptions struct {
 	Center   Point3
 	Radius   float64
 	Material Material
 }
 
-func NewSphere(center Point3, radius float64, material Material) Sphere {
-	return Sphere{Center: center, Radius: radius, Material: material}
+type Sphere struct {
+	SphereOptions
+}
+
+func NewSphere(options SphereOptions) Sphere {
+	return Sphere{SphereOptions: options}
 }
 
 func (s Sphere) Hit(r Ray, rt Interval) (Hit, bool) {

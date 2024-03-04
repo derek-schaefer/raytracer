@@ -9,7 +9,7 @@ import (
 )
 
 func TestNewHittables(t *testing.T) {
-	s := r.Sphere{Center: r.Point3{0, 0, 1}, Radius: 1}
+	s := r.NewSphere(r.SphereOptions{Center: r.NewPoint3(0, 0, 1), Radius: 1})
 
 	hs := r.NewHittables(s)
 
@@ -18,7 +18,7 @@ func TestNewHittables(t *testing.T) {
 }
 
 func TestHittablesAdd(t *testing.T) {
-	s := r.Sphere{Center: r.Point3{0, 0, 1}, Radius: 1}
+	s := r.NewSphere(r.SphereOptions{Center: r.NewPoint3(0, 0, 1), Radius: 1})
 
 	hs := r.NewHittables()
 
@@ -31,7 +31,7 @@ func TestHittablesAdd(t *testing.T) {
 }
 
 func TestHittablesClear(t *testing.T) {
-	s := r.Sphere{Center: r.Point3{0, 0, 1}, Radius: 1}
+	s := r.NewSphere(r.SphereOptions{Center: r.NewPoint3(0, 0, 1), Radius: 1})
 
 	hs := r.NewHittables(s)
 
@@ -43,7 +43,7 @@ func TestHittablesClear(t *testing.T) {
 }
 
 func TestHittablesHit(t *testing.T) {
-	s := r.Sphere{Center: r.Point3{0, 0, 1}, Radius: 1}
+	s := r.NewSphere(r.SphereOptions{Center: r.NewPoint3(0, 0, 1), Radius: 1})
 
 	hs := r.NewHittables(s)
 

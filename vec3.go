@@ -140,6 +140,14 @@ func (v Vec3) Dot(o Vec3) float64 {
 	return t
 }
 
+func (u Vec3) Cross(v Vec3) Vec3 {
+	return Vec3{
+		u[1]*v[2] - u[2]*v[1],
+		u[2]*v[0] - u[0]*v[2],
+		u[0]*v[1] - u[1]*v[0],
+	}
+}
+
 func (v Vec3) NearZero() bool {
 	for i := 0; i < len(v); i++ {
 		if !NearlyEqual(v[i], 0) {
