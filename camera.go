@@ -64,6 +64,8 @@ func (c *Camera) Render(world *Hittables) *Image {
 	image := NewImage(c.ImageWidth, c.imageHeight)
 
 	for j := 0; j < image.Height; j++ {
+		log.Printf("\rScanlines remaining: %d ", image.Height-j)
+
 		for i := 0; i < image.Width; i++ {
 			var pixel Vec3
 
@@ -80,6 +82,8 @@ func (c *Camera) Render(world *Hittables) *Image {
 			image.Set(i, j, NewColor(pixel).LinearToGamma())
 		}
 	}
+
+	log.Print("\rDone.                 \n")
 
 	return image
 }
@@ -166,13 +170,6 @@ func (c *Camera) pixelSampleSquare() Vec3 {
 func (c *Camera) rayColor(ray Ray, depth int, world *Hittables) Color {
 	if depth <= 0 {
 		return ColorBlack
-	}
-
-	if c == nil {
-		log.Println(c)
-		log.Println(ray)
-		log.Println(depth)
-		log.Println(world)
 	}
 
 	// Near zero min value to avoid shadow acne due to floating point errors

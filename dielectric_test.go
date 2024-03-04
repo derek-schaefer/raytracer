@@ -1,7 +1,6 @@
 package raytracer_test
 
 import (
-	"math/rand"
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
@@ -11,7 +10,7 @@ import (
 func TestDielectricScatter(t *testing.T) {
 	o := r.DielectricOptions{
 		IndexOfRefraction: 1.5,
-		Random:            rand.New(rand.NewSource(1)),
+		Random:            random,
 	}
 	d := r.NewDielectric(o)
 	i := r.NewRay(r.NewPoint3(0, 0, 0), r.NewVec3(1, 1, 1))

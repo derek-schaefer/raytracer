@@ -1,7 +1,6 @@
 package raytracer_test
 
 import (
-	"math/rand"
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
@@ -13,8 +12,6 @@ func TestNewCamera(t *testing.T) {
 }
 
 func TestCameraRender(t *testing.T) {
-	random := rand.New(rand.NewSource(1))
-
 	world := r.NewHittables()
 
 	material := r.NewMetal(r.MetalOptions{Albedo: r.NewColor(r.NewVec3(0.8, 0.6, 0.2)), Fuzz: 0.0, Random: random})

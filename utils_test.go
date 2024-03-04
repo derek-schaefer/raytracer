@@ -9,10 +9,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	random = rand.New(rand.NewSource(1))
+)
+
 func TestRandomFloat64(t *testing.T) {
 	min := 2.0
 	max := 3.0
-	random := rand.New(rand.NewSource(1))
 
 	n := r.RandFloat64(random, min, max)
 

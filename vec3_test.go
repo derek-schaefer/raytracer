@@ -2,15 +2,10 @@ package raytracer_test
 
 import (
 	"math"
-	"math/rand"
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
 	"github.com/stretchr/testify/assert"
-)
-
-var (
-	random = rand.New(rand.NewSource(1))
 )
 
 func TestNewVec3(t *testing.T) {
