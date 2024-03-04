@@ -11,6 +11,7 @@ type CameraOptions struct {
 	FocalLength    float64
 	ImageWidth     int
 	MaxDepth       int
+	Random         *rand.Rand
 	Samples        int
 	ViewportHeight float64
 }
@@ -27,6 +28,10 @@ type Camera struct {
 }
 
 func NewCamera(options CameraOptions) *Camera {
+	if options.Random == nil {
+		panic("CameraOptions.Random should not be nil")
+	}
+
 	return &Camera{CameraOptions: options}
 }
 
@@ -96,8 +101,8 @@ func (c *Camera) getRay(i, j int) Ray {
 
 // Returns a random point in the square surrounding a pixel at the origin.
 func (c *Camera) pixelSampleSquare() Vec3 {
-	px := -0.5 + rand.Float64()
-	py := -0.5 + rand.Float64()
+	px := -0.5 + c.Random.Float64()
+	py := -0.5 + c.Random.Float64()
 
 	dx := c.deltaU.Multiply(px)
 	dy := c.deltaV.Multiply(py)

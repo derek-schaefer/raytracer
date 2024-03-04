@@ -1,6 +1,7 @@
 package raytracer_test
 
 import (
+	"math/rand"
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
@@ -12,6 +13,8 @@ func TestNewCamera(t *testing.T) {
 }
 
 func TestCameraRender(t *testing.T) {
+	random := rand.New(rand.NewSource(1))
+
 	world := r.NewHittables()
 
 	world.Add(r.Sphere{Center: r.Point3{0, 0, -1}, Radius: 0.5})
@@ -22,6 +25,7 @@ func TestCameraRender(t *testing.T) {
 			Center:         r.Point3{0, 0, 0},
 			FocalLength:    1.0,
 			ImageWidth:     400,
+			Random:         random,
 			ViewportHeight: 2.0,
 		},
 	)

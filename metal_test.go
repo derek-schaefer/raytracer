@@ -1,6 +1,7 @@
 package raytracer_test
 
 import (
+	"math/rand"
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
@@ -8,8 +9,10 @@ import (
 )
 
 func TestMetalScatter(t *testing.T) {
+	random := rand.New(rand.NewSource(1))
+
 	c := r.NewColor(r.NewVec3(0.5, 0.5, 0.5))
-	m := r.NewMetal(c, 0.5)
+	m := r.NewMetal(r.MetalOptions{c, 0.5, random})
 	i := r.NewRay(r.NewPoint3(0, 0, 0), r.NewVec3(1, 1, 1))
 	h := r.Hit{}
 

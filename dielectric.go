@@ -2,14 +2,20 @@ package raytracer
 
 import (
 	"math"
+	"math/rand"
 )
 
-type Dielectric struct {
+type DielectricOptions struct {
 	IndexOfRefraction float64
+	Random            *rand.Rand
 }
 
-func NewDielectric(indexOfRefraction float64) Dielectric {
-	return Dielectric{IndexOfRefraction: indexOfRefraction}
+type Dielectric struct {
+	DielectricOptions
+}
+
+func NewDielectric(options DielectricOptions) Dielectric {
+	return Dielectric{DielectricOptions: options}
 }
 
 func (d Dielectric) Scatter(in Ray, hit Hit) (Ray, Color, bool) {
@@ -30,7 +36,7 @@ func (d Dielectric) Scatter(in Ray, hit Hit) (Ray, Color, bool) {
 
 	var direction Vec3
 
-	if cannotRefract {
+	if cannotRefract || Reflectance(cosTheta, refractionRatio) > d.Random.Float64() {
 		direction = unitDirection.Reflect(hit.N)
 	} else {
 		direction = unitDirection.Refract(hit.N, refractionRatio)

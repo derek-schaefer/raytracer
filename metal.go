@@ -1,26 +1,33 @@
 package raytracer
 
-type Metal struct {
+import "math/rand"
+
+type MetalOptions struct {
 	Albedo Color
 	Fuzz   float64
+	Random *rand.Rand
 }
 
-func NewMetal(albedo Color, fuzz float64) Metal {
-	var f float64
+type Metal struct {
+	MetalOptions
+}
 
-	if f < 1 {
-		f = fuzz
-	} else {
-		f = 1
+func NewMetal(options MetalOptions) Metal {
+	if options.Random == nil {
+		panic("MetalOptions.Random should not be nil")
 	}
 
-	return Metal{Albedo: albedo, Fuzz: f}
+	if options.Fuzz > 1 {
+		options.Fuzz = 1
+	}
+
+	return Metal{MetalOptions: options}
 }
 
 func (m Metal) Scatter(in Ray, hit Hit) (Ray, Color, bool) {
 	reflected := in.Direction.Unit().Reflect(hit.N)
 
-	scattered := Ray{Origin: hit.P, Direction: reflected.Add(RandomUnitVec3().Multiply(m.Fuzz))}
+	scattered := Ray{Origin: hit.P, Direction: reflected.Add(RandomUnitVec3(m.Random).Multiply(m.Fuzz))}
 
 	ok := scattered.Direction.Dot(hit.N) > 0
 

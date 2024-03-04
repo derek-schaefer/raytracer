@@ -1,6 +1,7 @@
 package raytracer_test
 
 import (
+	"math/rand"
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
@@ -32,12 +33,15 @@ func TestViewportDeltaV(t *testing.T) {
 }
 
 func TestViewportOrigin(t *testing.T) {
+	random := rand.New(rand.NewSource(1))
+
 	v := r.Viewport{Width: 16, Height: 9}
 
 	c := r.NewCamera(
 		r.CameraOptions{
 			Center:      r.Point3{0, 0, 0},
 			FocalLength: 1.0,
+			Random:      random,
 		},
 	)
 

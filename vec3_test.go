@@ -2,10 +2,15 @@ package raytracer_test
 
 import (
 	"math"
+	"math/rand"
 	"testing"
 
 	r "github.com/derek-schaefer/raytracer"
 	"github.com/stretchr/testify/assert"
+)
+
+var (
+	random = rand.New(rand.NewSource(1))
 )
 
 func TestNewVec3(t *testing.T) {
@@ -20,7 +25,7 @@ func TestRandomVec3(t *testing.T) {
 	min := 0.0
 	max := 1.0
 
-	v := r.RandomVec3()
+	v := r.RandomVec3(random)
 
 	x := v.X()
 	y := v.Y()
@@ -32,13 +37,13 @@ func TestRandomVec3(t *testing.T) {
 }
 
 func TestRandomUnitSphereVec3(t *testing.T) {
-	v := r.RandomUnitSphereVec3()
+	v := r.RandomUnitSphereVec3(random)
 
 	assert.Less(t, v.LengthSquared(), float64(1))
 }
 
 func TestRandomUnitVec3(t *testing.T) {
-	v := r.RandomUnitVec3()
+	v := r.RandomUnitVec3(random)
 
 	f := v.Length()
 
@@ -50,9 +55,9 @@ func TestRandomUnitVec3(t *testing.T) {
 }
 
 func TestRandomHemisphereVec3(t *testing.T) {
-	s := r.RandomUnitSphereVec3()
+	s := r.RandomUnitSphereVec3(random)
 
-	v := r.RandomHemisphereVec3(s)
+	v := r.RandomHemisphereVec3(random, s)
 
 	assert.Greater(t, v.Dot(s), float64(0))
 }
@@ -61,7 +66,7 @@ func TestRandomRangeVec3(t *testing.T) {
 	min := 2.0
 	max := 3.0
 
-	v := r.RandomRangeVec3(min, max)
+	v := r.RandomRangeVec3(random, min, max)
 
 	x := v.X()
 	y := v.Y()

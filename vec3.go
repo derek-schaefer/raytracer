@@ -12,17 +12,17 @@ func NewVec3(x, y, z float64) Vec3 {
 	return Vec3{x, y, z}
 }
 
-func RandomVec3() Vec3 {
-	return NewVec3(rand.Float64(), rand.Float64(), rand.Float64())
+func RandomVec3(r *rand.Rand) Vec3 {
+	return NewVec3(r.Float64(), r.Float64(), r.Float64())
 }
 
-func RandomRangeVec3(min, max float64) Vec3 {
-	return NewVec3(RandFloat64(min, max), RandFloat64(min, max), RandFloat64(min, max))
+func RandomRangeVec3(r *rand.Rand, min, max float64) Vec3 {
+	return NewVec3(RandFloat64(r, min, max), RandFloat64(r, min, max), RandFloat64(r, min, max))
 }
 
-func RandomUnitSphereVec3() Vec3 {
+func RandomUnitSphereVec3(r *rand.Rand) Vec3 {
 	for {
-		p := RandomRangeVec3(-1, 1)
+		p := RandomRangeVec3(r, -1, 1)
 
 		if p.LengthSquared() < 1 {
 			return p
@@ -30,12 +30,12 @@ func RandomUnitSphereVec3() Vec3 {
 	}
 }
 
-func RandomUnitVec3() Vec3 {
-	return RandomUnitSphereVec3().Unit()
+func RandomUnitVec3(r *rand.Rand) Vec3 {
+	return RandomUnitSphereVec3(r).Unit()
 }
 
-func RandomHemisphereVec3(normal Vec3) Vec3 {
-	v := RandomUnitVec3()
+func RandomHemisphereVec3(r *rand.Rand, normal Vec3) Vec3 {
+	v := RandomUnitVec3(r)
 
 	if v.Dot(normal) > 0 {
 		return v
