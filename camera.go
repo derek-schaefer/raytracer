@@ -1,9 +1,10 @@
 package raytracer
 
 import (
-	"log"
+	"fmt"
 	"math"
 	"math/rand"
+	"os"
 )
 
 type CameraOptions struct {
@@ -64,7 +65,7 @@ func (c *Camera) Render(world *Hittables) *Image {
 	image := NewImage(c.ImageWidth, c.imageHeight)
 
 	for j := 0; j < image.Height; j++ {
-		log.Printf("\rScanlines remaining: %d ", image.Height-j)
+		fmt.Fprintf(os.Stderr, "\033[2K\rScanlines remaining: %d", image.Height-j)
 
 		for i := 0; i < image.Width; i++ {
 			var pixel Vec3
@@ -83,7 +84,7 @@ func (c *Camera) Render(world *Hittables) *Image {
 		}
 	}
 
-	log.Print("\rDone.                 \n")
+	fmt.Fprintln(os.Stderr, "\033[2K\rDone.")
 
 	return image
 }
