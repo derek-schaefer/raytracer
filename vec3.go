@@ -44,6 +44,16 @@ func RandomHemisphereVec3(r *rand.Rand, normal Vec3) Vec3 {
 	}
 }
 
+func RandomUnitDiskVec3(r *rand.Rand) Vec3 {
+	for {
+		p := NewVec3(RandFloat64(r, -1, 1), RandFloat64(r, -1, 1), 0)
+
+		if p.LengthSquared() < 1 {
+			return p
+		}
+	}
+}
+
 func (v Vec3) X() float64 {
 	return v[0]
 }

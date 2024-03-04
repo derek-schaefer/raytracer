@@ -62,6 +62,16 @@ func TestRandomHemisphereVec3(t *testing.T) {
 	assert.Greater(t, v.Dot(s), float64(0))
 }
 
+func TestRandomUnitDiskVec3(t *testing.T) {
+	p := r.RandomUnitDiskVec3(random)
+
+	assert.Less(t, p.LengthSquared(), 1.0)
+
+	for i := 0; i < 2; i++ {
+		assert.True(t, -1 <= p[i] && p[i] <= 1)
+	}
+}
+
 func TestRandomRangeVec3(t *testing.T) {
 	min := 2.0
 	max := 3.0

@@ -25,6 +25,10 @@ type CameraOptions struct {
 	Samples int
 	// Camera-relative "up" direction
 	ViewUp Vec3
+	// Variation angle of rays through each pixel
+	DefocusAngle float64
+	// Distance from camera lookfrom point to plane of perfect focus
+	FocusDistance float64
 }
 
 type Camera struct {
@@ -40,6 +44,9 @@ type Camera struct {
 	u Vec3
 	v Vec3
 	w Vec3
+
+	defocusDiskU Vec3
+	defocusDiskV Vec3
 }
 
 func NewCamera(options CameraOptions) *Camera {
@@ -87,10 +94,9 @@ func (c *Camera) initialize() {
 
 	c.center = c.LookFrom
 
-	focalLength := c.LookFrom.Subtract(c.LookAt).Length()
 	theta := c.FieldOfView * (math.Pi / 180.0)
 	h := math.Tan(theta / 2)
-	viewportHeight := 2 * h * focalLength
+	viewportHeight := 2 * h * c.FocusDistance
 	viewportWidth := viewportHeight * (float64(c.ImageWidth) / float64(c.imageHeight))
 
 	c.w = c.LookFrom.Subtract(c.LookAt).Unit()
@@ -104,14 +110,19 @@ func (c *Camera) initialize() {
 	c.deltaV = viewportV.Divide(float64(c.imageHeight))
 
 	viewportUpperLeft := c.center.
-		Subtract(c.w.Multiply(focalLength)).
+		Subtract(c.w.Multiply(c.FocusDistance)).
 		Subtract(viewportU.Divide(2)).
 		Subtract(viewportV.Divide(2))
 
 	c.iorigin = viewportUpperLeft.Add(c.deltaU.Add(c.deltaV).Multiply(0.5))
+
+	defocusRadius := c.FocusDistance * math.Tan(c.DefocusAngle/2*(math.Pi/180))
+
+	c.defocusDiskU = c.u.Multiply(defocusRadius)
+	c.defocusDiskV = c.v.Multiply(defocusRadius)
 }
 
-// Get a randomly sampled camera ray for the pixel at location i, j.
+// Get a randomly-sampled camera ray for the pixel at location i,j, originating from the camera defocus disk.
 func (c *Camera) getRay(i, j int) Ray {
 	di := c.deltaU.Multiply(float64(i))
 	dj := c.deltaV.Multiply(float64(j))
@@ -119,10 +130,25 @@ func (c *Camera) getRay(i, j int) Ray {
 	pixelCenter := c.iorigin.Add(di).Add(dj)
 	pixelSample := pixelCenter.Add(c.pixelSampleSquare())
 
-	rayOrigin := c.center
+	var rayOrigin Vec3
+
+	if c.DefocusAngle <= 0 {
+		rayOrigin = c.center
+	} else {
+		rayOrigin = c.defocusDiskSample(c.Random)
+	}
+
 	rayDirection := pixelSample.Subtract(rayOrigin)
 
 	return Ray{Origin: rayOrigin, Direction: rayDirection}
+}
+
+func (c *Camera) defocusDiskSample(r *rand.Rand) Point3 {
+	p := RandomUnitDiskVec3(r)
+
+	return c.center.
+		Add(c.defocusDiskU.Multiply(p.X())).
+		Add(c.defocusDiskV.Multiply(p.Y()))
 }
 
 // Returns a random point in the square surrounding a pixel at the origin.

@@ -10,8 +10,10 @@ import (
 
 const (
 	aspectRatio     = 16.0 / 9.0
+	defocusAngle    = 10.0
 	fieldOfView     = 20
 	focalLength     = 1.0
+	focusDistance   = 3.4
 	imageWidth      = 400
 	maxDepth        = 50
 	samplesPerPixel = 100
@@ -42,15 +44,17 @@ func main() {
 
 	camera := r.NewCamera(
 		r.CameraOptions{
-			AspectRatio: aspectRatio,
-			FieldOfView: fieldOfView,
-			ImageWidth:  imageWidth,
-			LookAt:      lookAt,
-			LookFrom:    lookFrom,
-			MaxDepth:    maxDepth,
-			Random:      random,
-			Samples:     samplesPerPixel,
-			ViewUp:      vup,
+			AspectRatio:   aspectRatio,
+			DefocusAngle:  defocusAngle,
+			FieldOfView:   fieldOfView,
+			FocusDistance: focusDistance,
+			ImageWidth:    imageWidth,
+			LookAt:        lookAt,
+			LookFrom:      lookFrom,
+			MaxDepth:      maxDepth,
+			Random:        random,
+			Samples:       samplesPerPixel,
+			ViewUp:        vup,
 		},
 	)
 
