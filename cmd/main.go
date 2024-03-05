@@ -31,7 +31,7 @@ func main() {
 
 	world := r.NewHittables()
 
-	groundMaterial := r.NewLambertian(r.LambertianOptions{Albedo: r.NewColor(0.5, 0.5, 0.5), Random: random})
+	groundMaterial := r.NewLambertian(r.LambertianOptions{Albedo: r.NewColor(0.5, 0.5, 0.5)})
 	world.Add(r.NewSphere(r.SphereOptions{Center: r.NewPoint3(0, -1000, 0), Radius: 1000, Material: groundMaterial}))
 
 	for a := -11; a < 11; a++ {
@@ -45,15 +45,15 @@ func main() {
 				if chooseMat < 0.8 {
 					// diffuse
 					albedo := r.NewColorV(r.RandomVec3(random))
-					sphereMaterial = r.NewLambertian(r.LambertianOptions{Albedo: albedo, Random: random})
+					sphereMaterial = r.NewLambertian(r.LambertianOptions{Albedo: albedo})
 				} else if chooseMat < 0.95 {
 					// metal
 					albedo := r.NewColorV(r.RandomRangeVec3(random, 0.5, 1))
 					fuzz := r.RandFloat64(random, 0, 0.5)
-					sphereMaterial = r.NewMetal(r.MetalOptions{Albedo: albedo, Fuzz: fuzz, Random: random})
+					sphereMaterial = r.NewMetal(r.MetalOptions{Albedo: albedo, Fuzz: fuzz})
 				} else {
 					// glass
-					sphereMaterial = r.NewDielectric(r.DielectricOptions{IndexOfRefraction: 1.5, Random: random})
+					sphereMaterial = r.NewDielectric(r.DielectricOptions{IndexOfRefraction: 1.5})
 				}
 
 				world.Add(r.NewSphere(r.SphereOptions{Center: center, Radius: 0.2, Material: sphereMaterial}))
@@ -61,13 +61,13 @@ func main() {
 		}
 	}
 
-	material1 := r.NewDielectric(r.DielectricOptions{IndexOfRefraction: 1.5, Random: random})
+	material1 := r.NewDielectric(r.DielectricOptions{IndexOfRefraction: 1.5})
 	world.Add(r.NewSphere(r.SphereOptions{Center: r.NewPoint3(0, 1, 0), Radius: 1.0, Material: material1}))
 
-	material2 := r.NewLambertian(r.LambertianOptions{Albedo: r.NewColor(0.4, 0.2, 0.1), Random: random})
+	material2 := r.NewLambertian(r.LambertianOptions{Albedo: r.NewColor(0.4, 0.2, 0.1)})
 	world.Add(r.NewSphere(r.SphereOptions{Center: r.NewPoint3(-4, 1, 0), Radius: 1.0, Material: material2}))
 
-	material3 := r.NewMetal(r.MetalOptions{Albedo: r.NewColor(0.7, 0.6, 0.5), Fuzz: 0.0, Random: random})
+	material3 := r.NewMetal(r.MetalOptions{Albedo: r.NewColor(0.7, 0.6, 0.5), Fuzz: 0.0})
 	world.Add(r.NewSphere(r.SphereOptions{Center: r.NewPoint3(4, 1, 0), Radius: 1.0, Material: material3}))
 
 	camera := r.NewCamera(
@@ -80,7 +80,6 @@ func main() {
 			LookAt:        lookAt,
 			LookFrom:      lookFrom,
 			MaxDepth:      maxDepth,
-			Random:        random,
 			Samples:       samplesPerPixel,
 			ViewUp:        viewup,
 		},

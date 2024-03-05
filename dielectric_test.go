@@ -10,7 +10,6 @@ import (
 func TestDielectricScatter(t *testing.T) {
 	o := r.DielectricOptions{
 		IndexOfRefraction: 1.5,
-		Random:            random,
 	}
 	d := r.NewDielectric(o)
 	i := r.NewRay(r.NewPoint3(0, 0, 0), r.NewVec3(1, 1, 1))
@@ -26,7 +25,7 @@ func TestDielectricScatter(t *testing.T) {
 		Material: d,
 	}
 
-	s, a, ok = d.Scatter(i, h)
+	s, a, ok = d.Scatter(random, i, h)
 
 	n = -0.180354307934656
 
@@ -36,7 +35,7 @@ func TestDielectricScatter(t *testing.T) {
 
 	h.F = true
 
-	s, a, ok = d.Scatter(i, h)
+	s, a, ok = d.Scatter(random, i, h)
 
 	n = 0.5910582031297084
 

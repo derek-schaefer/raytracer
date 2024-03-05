@@ -1,5 +1,7 @@
 package raytracer
 
+import "math/rand"
+
 type Material interface {
-	Scatter(in Ray, hit Hit) (Ray, Color, bool)
+	Scatter(r *rand.Rand, in Ray, hit Hit) (Ray, Color, bool)
 }

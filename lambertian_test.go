@@ -9,11 +9,11 @@ import (
 
 func TestLambertianScatter(t *testing.T) {
 	c := r.NewColor(0.5, 0.5, 0.5)
-	l := r.NewLambertian(r.LambertianOptions{c, random})
+	l := r.NewLambertian(r.LambertianOptions{c})
 	i := r.NewRay(r.NewPoint3(0, 0, 0), r.NewVec3(1, 1, 1))
 	h := r.Hit{}
 
-	s, a, ok := l.Scatter(i, h)
+	s, a, ok := l.Scatter(random, i, h)
 
 	assert.True(t, ok)
 	assert.Equal(t, a, c)

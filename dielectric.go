@@ -7,7 +7,6 @@ import (
 
 type DielectricOptions struct {
 	IndexOfRefraction float64
-	Random            *rand.Rand
 }
 
 type Dielectric struct {
@@ -15,14 +14,10 @@ type Dielectric struct {
 }
 
 func NewDielectric(options DielectricOptions) Dielectric {
-	if options.Random == nil {
-		panic("options.Random must not be nil")
-	}
-
 	return Dielectric{DielectricOptions: options}
 }
 
-func (d Dielectric) Scatter(in Ray, hit Hit) (Ray, Color, bool) {
+func (d Dielectric) Scatter(random *rand.Rand, in Ray, hit Hit) (Ray, Color, bool) {
 	attenuation := ColorWhite
 
 	var refractionRatio float64
@@ -40,7 +35,7 @@ func (d Dielectric) Scatter(in Ray, hit Hit) (Ray, Color, bool) {
 
 	var direction Vec3
 
-	if cannotRefract || Reflectance(cosTheta, refractionRatio) > d.Random.Float64() {
+	if cannotRefract || Reflectance(cosTheta, refractionRatio) > random.Float64() {
 		direction = unitDirection.Reflect(hit.N)
 	} else {
 		direction = unitDirection.Refract(hit.N, refractionRatio)

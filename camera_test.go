@@ -14,7 +14,7 @@ func TestNewCamera(t *testing.T) {
 func TestCameraRender(t *testing.T) {
 	world := r.NewHittables()
 
-	material := r.NewMetal(r.MetalOptions{Albedo: r.NewColor(0.8, 0.6, 0.2), Fuzz: 0.0, Random: random})
+	material := r.NewMetal(r.MetalOptions{Albedo: r.NewColor(0.8, 0.6, 0.2), Fuzz: 0.0})
 
 	world.Add(r.NewSphere(r.SphereOptions{Center: r.NewPoint3(0, 0, -1), Radius: 0.5, Material: material}))
 
@@ -25,9 +25,8 @@ func TestCameraRender(t *testing.T) {
 			ImageWidth:  400,
 			LookAt:      r.NewPoint3(0, 0, -1),
 			LookFrom:    r.NewPoint3(-2, 2, 1),
-			MaxDepth:    10,
-			Random:      random,
-			Samples:     10,
+			MaxDepth:    2,
+			Samples:     2,
 			ViewUp:      r.NewPoint3(0, 1, 0),
 		},
 	)

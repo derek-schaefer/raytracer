@@ -5,6 +5,7 @@ import (
 	"math"
 	"math/rand"
 	"os"
+	"sync"
 )
 
 type CameraOptions struct {
@@ -20,8 +21,6 @@ type CameraOptions struct {
 	LookFrom Point3
 	// Maximum number of ray bounces into scene
 	MaxDepth int
-	// Pseudo-random number generator
-	Random *rand.Rand
 	// Count of random samples for each pixel
 	Samples int
 	// Camera-relative "up" direction
@@ -51,10 +50,6 @@ type Camera struct {
 }
 
 func NewCamera(options CameraOptions) *Camera {
-	if options.Random == nil {
-		panic("options.Random must not be nil")
-	}
-
 	return &Camera{CameraOptions: options}
 }
 
@@ -67,21 +62,32 @@ func (c *Camera) Render(world *Hittables) *Image {
 	for j := 0; j < image.Height; j++ {
 		fmt.Fprintf(os.Stderr, "\033[2K\rScanlines remaining: %d", image.Height-j)
 
+		var wg sync.WaitGroup
+
 		for i := 0; i < image.Width; i++ {
-			var pixel Vec3
+			wg.Add(1)
 
-			for s := 0; s < c.Samples; s++ {
-				ray := c.getRay(i, j)
-				pixel = pixel.Add(c.rayColor(ray, c.MaxDepth, world).V)
-			}
+			go func(i, j int) {
+				defer wg.Done()
 
-			scale := 1.0 / float64(c.Samples)
-			pixel.SetX(pixel.X() * scale)
-			pixel.SetY(pixel.Y() * scale)
-			pixel.SetZ(pixel.Z() * scale)
+				var pixel Vec3
 
-			image.Set(i, j, NewColorV(pixel).LinearToGamma())
+				random := rand.New(rand.NewSource(rand.Int63()))
+
+				for s := 0; s < c.Samples; s++ {
+					pixel = pixel.Add(c.rayColor(random, c.getRay(random, i, j), c.MaxDepth, world).V)
+				}
+
+				scale := 1.0 / float64(c.Samples)
+				pixel.SetX(pixel.X() * scale)
+				pixel.SetY(pixel.Y() * scale)
+				pixel.SetZ(pixel.Z() * scale)
+
+				image.Set(i, j, NewColorV(pixel).LinearToGamma())
+			}(i, j)
 		}
+
+		wg.Wait()
 	}
 
 	fmt.Fprintln(os.Stderr, "\033[2K\rDone.")
@@ -128,19 +134,19 @@ func (c *Camera) initialize() {
 }
 
 // Get a randomly-sampled camera ray for the pixel at location i,j, originating from the camera defocus disk.
-func (c *Camera) getRay(i, j int) Ray {
+func (c *Camera) getRay(random *rand.Rand, i, j int) Ray {
 	di := c.deltaU.Multiply(float64(i))
 	dj := c.deltaV.Multiply(float64(j))
 
 	pixelCenter := c.iorigin.Add(di).Add(dj)
-	pixelSample := pixelCenter.Add(c.pixelSampleSquare())
+	pixelSample := pixelCenter.Add(c.pixelSampleSquare(random))
 
 	var rayOrigin Vec3
 
 	if c.DefocusAngle <= 0 {
 		rayOrigin = c.center
 	} else {
-		rayOrigin = c.defocusDiskSample(c.Random)
+		rayOrigin = c.defocusDiskSample(random)
 	}
 
 	rayDirection := pixelSample.Subtract(rayOrigin)
@@ -157,9 +163,9 @@ func (c *Camera) defocusDiskSample(r *rand.Rand) Point3 {
 }
 
 // Returns a random point in the square surrounding a pixel at the origin.
-func (c *Camera) pixelSampleSquare() Vec3 {
-	px := -0.5 + c.Random.Float64()
-	py := -0.5 + c.Random.Float64()
+func (c *Camera) pixelSampleSquare(random *rand.Rand) Vec3 {
+	px := -0.5 + random.Float64()
+	py := -0.5 + random.Float64()
 
 	dx := c.deltaU.Multiply(px)
 	dy := c.deltaV.Multiply(py)
@@ -168,15 +174,15 @@ func (c *Camera) pixelSampleSquare() Vec3 {
 }
 
 // Determine the ray color based on the object it hits, it any.
-func (c *Camera) rayColor(ray Ray, depth int, world *Hittables) Color {
+func (c *Camera) rayColor(random *rand.Rand, ray Ray, depth int, world *Hittables) Color {
 	if depth <= 0 {
 		return ColorBlack
 	}
 
 	// Near zero min value to avoid shadow acne due to floating point errors
 	if h, ok := world.Hit(ray, NewInterval(0.001, math.Inf(1))); ok {
-		if scattered, attenuation, ok := h.Material.Scatter(ray, h); ok {
-			return NewColorV(attenuation.V.MultiplyV(c.rayColor(scattered, depth-1, world).V))
+		if scattered, attenuation, ok := h.Material.Scatter(random, ray, h); ok {
+			return NewColorV(attenuation.V.MultiplyV(c.rayColor(random, scattered, depth-1, world).V))
 		}
 		return ColorBlack
 	}

@@ -9,11 +9,11 @@ import (
 
 func TestMetalScatter(t *testing.T) {
 	c := r.NewColor(0.5, 0.5, 0.5)
-	m := r.NewMetal(r.MetalOptions{c, 0.5, random})
+	m := r.NewMetal(r.MetalOptions{c, 0.5})
 	i := r.NewRay(r.NewPoint3(0, 0, 0), r.NewVec3(1, 1, 1))
 	h := r.Hit{}
 
-	s, a, ok := m.Scatter(i, h)
+	s, a, ok := m.Scatter(random, i, h)
 
 	assert.Equal(t, a, c)
 	assert.Equal(t, s.Origin, h.P)
