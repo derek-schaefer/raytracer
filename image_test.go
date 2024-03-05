@@ -11,17 +11,17 @@ import (
 func TestImageSet(t *testing.T) {
 	img := r.NewImage(8, 8)
 
-	img.Set(3, 2, r.NewColor(r.Vec3{0, 0, 255}))
+	img.Set(3, 2, r.NewColor(0, 0, 255))
 
-	assert.Equal(t, img.Pixels[19], r.NewColor(r.Vec3{0, 0, 255}))
+	assert.Equal(t, img.Pixels[19], r.NewColor(0, 0, 255))
 }
 
 func TestImageGet(t *testing.T) {
 	img := r.NewImage(8, 8)
 
-	img.Pixels[19] = r.NewColor(r.Vec3{0, 0, 255})
+	img.Pixels[19] = r.NewColor(0, 0, 255)
 
-	assert.Equal(t, img.Get(3, 2), r.NewColor(r.Vec3{0, 0, 255}))
+	assert.Equal(t, img.Get(3, 2), r.NewColor(0, 0, 255))
 }
 
 func TestImageWritePPM(t *testing.T) {
@@ -29,7 +29,7 @@ func TestImageWritePPM(t *testing.T) {
 
 	for j := 0; j < img.Height; j++ {
 		for i := 0; i < img.Width; i++ {
-			img.Set(i, j, r.NewColor(r.Vec3{float64(i) / 255, float64(j) / 255, 0}))
+			img.Set(i, j, r.NewColor(float64(i)/255, float64(j)/255, 0))
 		}
 	}
 

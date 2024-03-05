@@ -7,17 +7,21 @@ import (
 )
 
 var (
-	intensity = NewInterval(0.0, 0.999)
+	ColorBlack = NewColor(0, 0, 0)
+	ColorWhite = NewColor(1, 1, 1)
 
-	ColorBlack = NewColor(NewVec3(0, 0, 0))
-	ColorWhite = NewColor(NewVec3(1, 1, 1))
+	intensity = NewInterval(0.0, 0.999)
 )
 
 type Color struct {
 	V Vec3
 }
 
-func NewColor(v Vec3) Color {
+func NewColor(r, g, b float64) Color {
+	return Color{NewVec3(r, g, b)}
+}
+
+func NewColorV(v Vec3) Color {
 	return Color{v}
 }
 
@@ -29,7 +33,7 @@ func (c Color) LinearToGamma() Color {
 		v[i] = math.Sqrt(c.V[i])
 	}
 
-	return NewColor(v)
+	return NewColorV(v)
 }
 
 // Write the color in PPM format to a buffer.

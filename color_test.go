@@ -10,7 +10,7 @@ import (
 )
 
 func TestColorLinearToGamma(t *testing.T) {
-	c1 := r.NewColor(r.NewVec3(9, 9, 9))
+	c1 := r.NewColor(9, 9, 9)
 
 	c2 := c1.LinearToGamma()
 
@@ -20,7 +20,7 @@ func TestColorLinearToGamma(t *testing.T) {
 }
 
 func TestColorWritePPM(t *testing.T) {
-	c1 := r.NewColor(r.Vec3{2e-2, 4e-2, 8e-2})
+	c1 := r.NewColor(2e-2, 4e-2, 8e-2)
 
 	var b bytes.Buffer
 
@@ -28,7 +28,7 @@ func TestColorWritePPM(t *testing.T) {
 
 	assert.Equal(t, b.String(), "5 10 20\n")
 
-	c2 := r.NewColor(r.NewVec3(-1, 0, 2))
+	c2 := r.NewColor(-1, 0, 2)
 
 	b.Reset()
 

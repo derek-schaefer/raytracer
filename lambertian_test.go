@@ -8,7 +8,7 @@ import (
 )
 
 func TestLambertianScatter(t *testing.T) {
-	c := r.NewColor(r.NewVec3(0.5, 0.5, 0.5))
+	c := r.NewColor(0.5, 0.5, 0.5)
 	l := r.NewLambertian(r.LambertianOptions{c, random})
 	i := r.NewRay(r.NewPoint3(0, 0, 0), r.NewVec3(1, 1, 1))
 	h := r.Hit{}

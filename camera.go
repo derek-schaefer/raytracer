@@ -52,7 +52,7 @@ type Camera struct {
 
 func NewCamera(options CameraOptions) *Camera {
 	if options.Random == nil {
-		panic("CameraOptions.Random should not be nil")
+		panic("options.Random must not be nil")
 	}
 
 	return &Camera{CameraOptions: options}
@@ -80,7 +80,7 @@ func (c *Camera) Render(world *Hittables) *Image {
 			pixel.SetY(pixel.Y() * scale)
 			pixel.SetZ(pixel.Z() * scale)
 
-			image.Set(i, j, NewColor(pixel).LinearToGamma())
+			image.Set(i, j, NewColorV(pixel).LinearToGamma())
 		}
 	}
 
@@ -176,7 +176,7 @@ func (c *Camera) rayColor(ray Ray, depth int, world *Hittables) Color {
 	// Near zero min value to avoid shadow acne due to floating point errors
 	if h, ok := world.Hit(ray, NewInterval(0.001, math.Inf(1))); ok {
 		if scattered, attenuation, ok := h.Material.Scatter(ray, h); ok {
-			return NewColor(attenuation.V.MultiplyV(c.rayColor(scattered, depth-1, world).V))
+			return NewColorV(attenuation.V.MultiplyV(c.rayColor(scattered, depth-1, world).V))
 		}
 		return ColorBlack
 	}
@@ -185,5 +185,5 @@ func (c *Camera) rayColor(ray Ray, depth int, world *Hittables) Color {
 	v := Vec3{1.0, 1.0, 1.0}.Multiply(1.0 - a).
 		Add(Vec3{0.5, 0.7, 1.0}.Multiply(a))
 
-	return NewColor(v)
+	return NewColorV(v)
 }

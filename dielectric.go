@@ -15,6 +15,10 @@ type Dielectric struct {
 }
 
 func NewDielectric(options DielectricOptions) Dielectric {
+	if options.Random == nil {
+		panic("options.Random must not be nil")
+	}
+
 	return Dielectric{DielectricOptions: options}
 }
 

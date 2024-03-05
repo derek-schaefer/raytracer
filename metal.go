@@ -14,7 +14,7 @@ type Metal struct {
 
 func NewMetal(options MetalOptions) Metal {
 	if options.Random == nil {
-		panic("MetalOptions.Random should not be nil")
+		panic("options.Random must not be nil")
 	}
 
 	if options.Fuzz > 1 {

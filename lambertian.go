@@ -13,7 +13,7 @@ type Lambertian struct {
 
 func NewLambertian(options LambertianOptions) Lambertian {
 	if options.Random == nil {
-		panic("LambertianOptions.Random should not be nil")
+		panic("options.Random must not be nil")
 	}
 
 	return Lambertian{LambertianOptions: options}
