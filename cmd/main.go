@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"math/rand"
+	"runtime"
 
 	r "github.com/derek-schaefer/raytracer"
 )
@@ -82,6 +83,7 @@ func main() {
 			MaxDepth:      maxDepth,
 			Samples:       samplesPerPixel,
 			ViewUp:        viewup,
+			Workers:       runtime.NumCPU(),
 		},
 	)
 

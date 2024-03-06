@@ -1,11 +1,9 @@
 package raytracer
 
 import (
-	"fmt"
+	"log"
 	"math"
 	"math/rand"
-	"os"
-	"sync"
 )
 
 type CameraOptions struct {
@@ -29,6 +27,8 @@ type CameraOptions struct {
 	DefocusAngle float64
 	// Distance from camera lookfrom point to plane of perfect focus
 	FocusDistance float64
+	// Number of concurrent render workers
+	Workers int
 }
 
 type Camera struct {
@@ -49,7 +49,24 @@ type Camera struct {
 	defocusDiskV Vec3
 }
 
+type job struct {
+	w *Hittables
+	x int
+	y int
+	r *rand.Rand
+}
+
+type result struct {
+	x int
+	y int
+	c Color
+}
+
 func NewCamera(options CameraOptions) *Camera {
+	if options.Workers == 0 {
+		options.Workers = 1
+	}
+
 	return &Camera{CameraOptions: options}
 }
 
@@ -59,40 +76,57 @@ func (c *Camera) Render(world *Hittables) *Image {
 
 	image := NewImage(c.ImageWidth, c.imageHeight)
 
-	for j := 0; j < image.Height; j++ {
-		fmt.Fprintf(os.Stderr, "\033[2K\rScanlines remaining: %d", image.Height-j)
+	size := len(image.Pixels)
+	jobs := make(chan job, size)
+	results := make(chan result, size)
 
-		var wg sync.WaitGroup
+	log.Printf("worker count: %d\n", c.Workers)
 
-		for i := 0; i < image.Width; i++ {
-			wg.Add(1)
-
-			go func(i, j int) {
-				defer wg.Done()
-
-				var pixel Vec3
-
-				random := rand.New(rand.NewSource(rand.Int63()))
-
-				for s := 0; s < c.Samples; s++ {
-					pixel = pixel.Add(c.rayColor(random, c.getRay(random, i, j), c.MaxDepth, world).V)
-				}
-
-				scale := 1.0 / float64(c.Samples)
-				pixel.SetX(pixel.X() * scale)
-				pixel.SetY(pixel.Y() * scale)
-				pixel.SetZ(pixel.Z() * scale)
-
-				image.Set(i, j, NewColorV(pixel).LinearToGamma())
-			}(i, j)
-		}
-
-		wg.Wait()
+	for w := 0; w < c.Workers; w++ {
+		go c.renderWorker(jobs, results)
 	}
 
-	fmt.Fprintln(os.Stderr, "\033[2K\rDone.")
+	for y := 0; y < image.Height; y++ {
+		for x := 0; x < image.Width; x++ {
+			jobs <- job{world, x, y, rand.New(rand.NewSource(rand.Int63()))}
+		}
+	}
+
+	close(jobs)
+
+	log.Printf("job count: %d\n", size)
+
+	for n := 1; n <= size; n++ {
+		r := <-results
+
+		image.Set(r.x, r.y, r.c)
+
+		if n%(size/100) == 0 {
+			log.Printf("completed: %d%%\n", int(float32(n)/float32(size)*100))
+		}
+	}
+
+	log.Println("done")
 
 	return image
+}
+
+// For each job, trace the indicated pixel with multi-sampling and send the result.
+func (c *Camera) renderWorker(jobs <-chan job, results chan<- result) {
+	for j := range jobs {
+		var pixel Vec3
+
+		for s := 0; s < c.Samples; s++ {
+			pixel = pixel.Add(c.rayColor(j.r, c.getRay(j.r, j.x, j.y), c.MaxDepth, j.w).V)
+		}
+
+		scale := 1.0 / float64(c.Samples)
+		pixel.SetX(pixel.X() * scale)
+		pixel.SetY(pixel.Y() * scale)
+		pixel.SetZ(pixel.Z() * scale)
+
+		results <- result{j.x, j.y, NewColorV(pixel).LinearToGamma()}
+	}
 }
 
 // Assign a variety of properties used by multiple camera methods.
