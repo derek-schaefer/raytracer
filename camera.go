@@ -50,7 +50,6 @@ type Camera struct {
 }
 
 type job struct {
-	w *Hittables
 	x int
 	y int
 	r *rand.Rand
@@ -83,12 +82,12 @@ func (c *Camera) Render(world *Hittables) *Image {
 	log.Printf("worker count: %d\n", c.Workers)
 
 	for w := 0; w < c.Workers; w++ {
-		go c.renderWorker(jobs, results)
+		go c.renderWorker(world, jobs, results)
 	}
 
 	for y := 0; y < image.Height; y++ {
 		for x := 0; x < image.Width; x++ {
-			jobs <- job{world, x, y, rand.New(rand.NewSource(rand.Int63()))}
+			jobs <- job{x, y, rand.New(rand.NewSource(rand.Int63()))}
 		}
 	}
 
@@ -112,12 +111,12 @@ func (c *Camera) Render(world *Hittables) *Image {
 }
 
 // For each job, trace the indicated pixel with multi-sampling and send the result.
-func (c *Camera) renderWorker(jobs <-chan job, results chan<- result) {
+func (c *Camera) renderWorker(world *Hittables, jobs <-chan job, results chan<- result) {
 	for j := range jobs {
 		var pixel Vec3
 
 		for s := 0; s < c.Samples; s++ {
-			pixel = pixel.Add(c.rayColor(j.r, c.getRay(j.r, j.x, j.y), c.MaxDepth, j.w).V)
+			pixel = pixel.Add(c.rayColor(j.r, c.getRay(j.r, j.x, j.y), c.MaxDepth, world).V)
 		}
 
 		scale := 1.0 / float64(c.Samples)
@@ -188,6 +187,7 @@ func (c *Camera) getRay(random *rand.Rand, i, j int) Ray {
 	return Ray{Origin: rayOrigin, Direction: rayDirection}
 }
 
+// Returns a random point in the camera defocus disk.
 func (c *Camera) defocusDiskSample(r *rand.Rand) Point3 {
 	p := RandomUnitDiskVec3(r)
 
