@@ -8,10 +8,6 @@ import (
 
 type Vec3 [3]float64
 
-type Numeric interface {
-	float64 | Vec3
-}
-
 func NewVec3(x, y, z float64) Vec3 {
 	return Vec3{x, y, z}
 }
